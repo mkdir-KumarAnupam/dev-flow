@@ -1,4 +1,9 @@
-@import "@fontsource-variable/outfit";
+const fs = require('fs');
+const path = require('path');
+
+const cssPath = path.join(__dirname, 'dashboard', 'src', 'index.css');
+
+const optimizedCSS = `@import "@fontsource-variable/outfit";
 @import url('https://cdn.jsdelivr.net/npm/firacode-nerd-font-web@2.1.0/css/fira-code.min.css');
 
 @tailwind base;
@@ -94,3 +99,7 @@
 /* ─── Hide scrollbars for horizontal tag rows ─── */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+`;
+
+fs.writeFileSync(cssPath, optimizedCSS);
+console.log('index.css optimized!');

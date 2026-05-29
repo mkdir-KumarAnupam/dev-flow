@@ -1,4 +1,9 @@
 const { app, BrowserWindow, ipcMain, shell, dialog, globalShortcut } = require("electron");
+
+app.commandLine.appendSwitch('enable-gpu-rasterization');
+app.commandLine.appendSwitch('enable-zero-copy');
+app.commandLine.appendSwitch('ignore-gpu-blocklist');
+
 const path = require("path");
 const express = require("express");
 const cors = require("cors");
