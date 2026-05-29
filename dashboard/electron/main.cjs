@@ -1886,15 +1886,20 @@ function createWindow() {
         child.on('exit', (code) => {
           if (!isResolved) {
              isResolved = true;
+             clearTimeout(timeoutHandle);
              reject(new Error(`Dev server exited prematurely with code ${code}. Output: ${lastOutput.substring(lastOutput.length - 150)}`));
           }
         });
         
-        setTimeout(() => {
+        timeoutHandle = setTimeout(() => {
           if (!isResolved) {
             isResolved = true;
             child.kill();
-            reject(new Error(`Timeout waiting for dev server port output. Last output: ${lastOutput.substring(lastOutput.length - 150)}`));
+            if (!portFound) {
+              reject(new Error(`Timeout waiting for dev server port output. Last output: ${lastOutput.substring(lastOutput.length - 150)}`));
+            } else {
+              reject(new Error(`Dev server started, but SSH tunnel establishment timed out.`));
+            }
           }
         }, 15000);
       });
