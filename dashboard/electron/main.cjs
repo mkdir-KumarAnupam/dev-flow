@@ -1825,12 +1825,13 @@ function createWindow() {
         
         let portFound = false;
         let lastOutput = '';
+        let isResolved = false;
         
         const onData = async (data) => {
           const out = data.toString();
           lastOutput += out;
           console.log(out);
-          const match = out.match(/http:\/\/(?:localhost|127\.0\.0\.1|0\.0\.0\.0):(\d+)/);
+          const match = lastOutput.match(/http:\/\/(?:localhost|127\.0\.0\.1|0\.0\.0\.0):(\d+)/);
           if (match && !portFound) {
             portFound = true;
             const port = parseInt(match[1]);
@@ -1838,9 +1839,15 @@ function createWindow() {
             try {
               const tunnel = await localtunnel({ port });
               tunnel.on('close', () => { child.kill(); });
-              resolve({ url: tunnel.url });
+              if (!isResolved) {
+                isResolved = true;
+                resolve({ url: tunnel.url });
+              }
             } catch (err) {
-              reject(err);
+              if (!isResolved) {
+                isResolved = true;
+                reject(err);
+              }
             }
           }
         };
@@ -1848,19 +1855,24 @@ function createWindow() {
         child.stderr.on('data', onData);
         
         child.on('error', (err) => {
-          if (!portFound) reject(err);
+          if (!isResolved) {
+             isResolved = true;
+             reject(err);
+          }
         });
 
         child.on('exit', (code) => {
-          if (!portFound) {
-             reject(new Error(`Dev server exited prematurely with code ${code}. Output: ${lastOutput.substring(0, 150)}`));
+          if (!isResolved) {
+             isResolved = true;
+             reject(new Error(`Dev server exited prematurely with code ${code}. Output: ${lastOutput.substring(lastOutput.length - 150)}`));
           }
         });
         
         setTimeout(() => {
-          if (!portFound) {
+          if (!isResolved) {
+            isResolved = true;
             child.kill();
-            reject(new Error(`Timeout waiting for dev server port output. Last output: ${lastOutput.substring(0, 150)}`));
+            reject(new Error(`Timeout waiting for dev server port output. Last output: ${lastOutput.substring(lastOutput.length - 150)}`));
           }
         }, 15000);
       });
