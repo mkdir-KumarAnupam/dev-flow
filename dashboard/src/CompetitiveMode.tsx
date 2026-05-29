@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { Play, Check, X, Trophy, Save, Activity, RefreshCw, ChevronDown, Sword, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -602,12 +603,12 @@ export default function CompetitiveMode({ onBack, practice = [] }: CompetitiveMo
 
       {/* Configuration Modal */}
       <AnimatePresence>
-        {showConfigModal && (
+        {showConfigModal && createPortal(
           <motion.div 
             initial={{ opacity: 0 }} 
             animate={{ opacity: 1 }} 
             exit={{ opacity: 0 }} 
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-6" 
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-6" 
             onClick={() => setShowConfigModal(false)}
           >
             <motion.div 
@@ -797,7 +798,7 @@ export default function CompetitiveMode({ onBack, practice = [] }: CompetitiveMo
               </div>
             </motion.div>
           </motion.div>
-        )}
+        , document.body)}
       </AnimatePresence>
 
     </div>
