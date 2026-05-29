@@ -848,6 +848,14 @@ function AppContent() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <AnimatePresence mode="wait">
+        {activeTab === 'Workspace' && <AssetWorkspaceTab />}
+        {activeTab === 'Tracker' && <KanbanTrackerTab />}
+        {activeTab === 'Arena' && <CodingArenaTab />}
+        {activeTab === 'Focus' && <FocusTimerTab />}
+        {activeTab === 'Playground' && <DeveloperPlaygroundTab />}
+      </AnimatePresence>
       </div> {/* End inner scrolling container */}
 
       {/* ═══ FLOATING BOTTOM NAV ═══ */}
