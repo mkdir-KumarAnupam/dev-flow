@@ -1790,13 +1790,25 @@ function createWindow() {
       return await new Promise((resolve, reject) => {
         const { spawn } = require('child_process');
         const localtunnel = require('localtunnel');
+        const fs = require('fs');
+        const path = require('path');
+        
         console.log('Starting dev server in: ' + projectPath);
         
+        if (!projectPath || !fs.existsSync(projectPath)) {
+            return reject(new Error('Project path does not exist: ' + projectPath));
+        }
+
+        let pm = 'npm';
+        if (fs.existsSync(path.join(projectPath, 'bun.lockb')) || fs.existsSync(path.join(projectPath, 'bun.lock'))) pm = 'bun';
+        else if (fs.existsSync(path.join(projectPath, 'pnpm-lock.yaml'))) pm = 'pnpm';
+        else if (fs.existsSync(path.join(projectPath, 'yarn.lock'))) pm = 'yarn';
+
         let envs = Object.assign({}, process.env);
         // Inject keys if available
         try {
           const { safeStorage } = require('electron');
-          const vaultPath = require('path').join(app.getPath('userData'), '.devos_vault');
+          const vaultPath = path.join(app.getPath('userData'), '.devos_vault');
           if (fs.existsSync(vaultPath) && safeStorage.isEncryptionAvailable()) {
             const keys = JSON.parse(safeStorage.decryptString(fs.readFileSync(vaultPath)));
             keys.forEach(k => {
@@ -1809,13 +1821,16 @@ function createWindow() {
           }
         } catch(e) {}
         
-        const child = spawn('bun', ['run', 'dev'], { cwd: projectPath, env: envs, shell: true });
+        const child = spawn(pm, ['run', 'dev'], { cwd: projectPath, env: envs, shell: true });
         
         let portFound = false;
+        let lastOutput = '';
+        
         const onData = async (data) => {
           const out = data.toString();
+          lastOutput += out;
           console.log(out);
-          const match = out.match(/http:\/\/localhost:(\d+)/);
+          const match = out.match(/http:\/\/(?:localhost|127\.0\.0\.1|0\.0\.0\.0):(\d+)/);
           if (match && !portFound) {
             portFound = true;
             const port = parseInt(match[1]);
@@ -1835,11 +1850,17 @@ function createWindow() {
         child.on('error', (err) => {
           if (!portFound) reject(err);
         });
+
+        child.on('exit', (code) => {
+          if (!portFound) {
+             reject(new Error(`Dev server exited prematurely with code ${code}. Output: ${lastOutput.substring(0, 150)}`));
+          }
+        });
         
         setTimeout(() => {
           if (!portFound) {
             child.kill();
-            reject(new Error('Timeout waiting for dev server port output'));
+            reject(new Error(`Timeout waiting for dev server port output. Last output: ${lastOutput.substring(0, 150)}`));
           }
         }, 15000);
       });
