@@ -26,7 +26,12 @@ export default function TunnelQRCodeModal() {
           if (res.error) {
             if (isMounted) setError(res.error);
           } else {
-            if (isMounted) setTunnelUrl(res.url);
+            if (isMounted) {
+               setTunnelUrl(res.url);
+               if (res.localUrl) {
+                  try { (window as any).require('electron').shell.openExternal(res.localUrl); } catch(e) {}
+               }
+            }
           }
         } catch (e: any) {
           if (isMounted) setError(e.message || "Failed to establish tunnel");

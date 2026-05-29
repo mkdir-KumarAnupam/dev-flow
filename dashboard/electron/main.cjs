@@ -129,7 +129,8 @@ function setupWorkspaceWatcher() {
     if (!fs.existsSync(targetPath)) return;
 
     // Watch for new package.json files up to 2 directories deep
-    workspaceWatcher = chokidar.watch(path.join(targetPath, '*/package.json'), { ignoreInitial: true, depth: 1 });
+    const globPattern = targetPath.replace(/\\/g, '/') + '/*/package.json';
+    workspaceWatcher = chokidar.watch(globPattern, { ignoreInitial: true, depth: 1 });
     workspaceWatcher.on('add', async (filePath) => {
       try {
         const projectDir = path.dirname(filePath);
@@ -1918,7 +1919,7 @@ function createWindow() {
                 if (sshMatch && !isResolved) {
                   isResolved = true;
                   clearTimeout(timeoutHandle);
-                  resolve({ url: sshMatch[0] });
+                  resolve({ url: sshMatch[0], localUrl: `http://localhost:${port}` });
                 }
               };
               
