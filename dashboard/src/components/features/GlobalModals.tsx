@@ -8,6 +8,8 @@ import GitStatusModal from './modals/GitStatusModal';
 import DrilldownModal from './modals/DrilldownModal';
 import IssueDetailsModal from './modals/IssueDetailsModal';
 import DeploymentsModal from './modals/DeploymentsModal';
+import TunnelQRCodeModal from './modals/TunnelQRCodeModal';
+import SecurityManagerModal from './modals/SecurityManagerModal';
 
 export default function GlobalModals() {
   return (
@@ -22,6 +24,8 @@ export default function GlobalModals() {
       <DrilldownModal />
       <IssueDetailsModal />
       <DeploymentsModal />
+      <TunnelQRCodeModal />
+      <SecurityManagerModal />
     </>
   );
 }

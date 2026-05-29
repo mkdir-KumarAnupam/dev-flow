@@ -127,6 +127,8 @@ export const GlobalAppProvider = ({ children }: { children: React.ReactNode }) =
   const [sessionJustEnded, setSessionJustEnded] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
   const [isGeneratingReport, setIsGeneratingReport] = useState(false);
+  const [tunnelingProject, setTunnelingProject] = useState<string|null>(null);
+  const [securityManagerOpen, setSecurityManagerOpen] = useState(false);
   const [localIp, setLocalIp] = useState<string>('');
   const [tunnelUrl, setTunnelUrl] = useState<string>('');
 

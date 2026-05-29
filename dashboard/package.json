@@ -27,6 +27,7 @@
     "clsx": "^2.1.1",
     "firebase-admin": "^13.10.0",
     "framer-motion": "^12.40.0",
+    "localtunnel": "^2.0.2",
     "lucide-react": "^1.16.0",
     "monaco-editor": "^0.55.1",
     "node-pty": "^1.1.0",
