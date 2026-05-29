@@ -352,7 +352,6 @@ export const GlobalAppProvider = ({ children }: { children: React.ReactNode }) =
       const { ipcRenderer } = (window as any).require('electron');
       const handleNewProject = (e: any, projectDir: string) => {
         fetchAll(); // Refresh workspace
-        setTunnelingProject(projectDir); // Auto-spin tunnel!
       };
       ipcRenderer.on('new-project-detected', handleNewProject);
       return () => { ipcRenderer.removeListener('new-project-detected', handleNewProject); };

@@ -1967,14 +1967,18 @@ function createWindow() {
         timeoutHandle = setTimeout(() => {
           if (!isResolved) {
             isResolved = true;
-            child.kill();
+            if (process.platform === 'win32') {
+               require('child_process').exec(`taskkill /pid ${child.pid} /t /f`, () => {});
+            } else {
+               child.kill();
+            }
             if (!portFound) {
               reject(new Error(`Timeout waiting for dev server port output. Last output: ${lastOutput.substring(lastOutput.length - 150)}`));
             } else {
               reject(new Error(`Dev server started, but SSH tunnel establishment timed out.`));
             }
           }
-        }, 15000);
+        }, 60000);
       });
     } catch (e) {
       console.error(e);
