@@ -139,20 +139,20 @@ function setupWorkspaceWatcher() {
         
         const cliDir = path.join(home, '.dev-cli');
         const projectsFile = path.join(cliDir, "projects.json");
-        let projects = {};
-        try { projects = await fs.readJson(projectsFile); } catch(e) {}
+        let projects = [];
+        try { 
+          const parsed = await fs.readJson(projectsFile); 
+          projects = Array.isArray(parsed) ? parsed : Object.values(parsed);
+        } catch(e) {}
         
-        const existingKey = Object.keys(projects).find(k => projects[k].path === projectDir);
-        if (!existingKey) {
-          const newId = Date.now().toString();
-          projects[newId] = {
-            id: newId,
+        const existing = projects.find(p => p.path === projectDir);
+        if (!existing) {
+          projects.push({
             name: projectName,
             path: projectDir,
-            type: "React/Web", // default assumption
-            color: "violet",
-            lastModified: new Date().toISOString()
-          };
+            type: "React/Web",
+            createdAt: new Date().toISOString()
+          });
           await fs.writeJson(projectsFile, projects, { spaces: 2 });
           console.log(`Auto-detected new project: ${projectName}`);
           
