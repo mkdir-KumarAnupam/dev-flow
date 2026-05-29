@@ -1836,16 +1836,38 @@ function createWindow() {
             portFound = true;
             const port = parseInt(match[1]);
             console.log('Detected dev port:', port);
+            
             try {
-              const tunnel = await localtunnel({ port });
-              tunnel.on('close', () => { child.kill(); });
-              if (!isResolved) {
-                isResolved = true;
-                resolve({ url: tunnel.url });
-              }
+              const ssh = spawn('ssh', ['-o', 'StrictHostKeyChecking=no', '-R', `80:localhost:${port}`, 'nokey@localhost.run']);
+              
+              const sshProcessOutput = (sshData) => {
+                const str = sshData.toString();
+                const sshMatch = str.match(/https:\/\/[a-zA-Z0-9.-]+\.lhr\.life/);
+                if (sshMatch && !isResolved) {
+                  isResolved = true;
+                  clearTimeout(timeoutHandle);
+                  resolve({ url: sshMatch[0] });
+                }
+              };
+              
+              ssh.stdout.on('data', sshProcessOutput);
+              ssh.stderr.on('data', sshProcessOutput);
+              
+              ssh.on('error', (err) => {
+                if (!isResolved) {
+                  isResolved = true;
+                  clearTimeout(timeoutHandle);
+                  reject(new Error("SSH Tunnel error: " + err.message));
+                }
+              });
+
+              // When the child dev server dies, kill the SSH tunnel
+              child.on('exit', () => { ssh.kill(); });
+
             } catch (err) {
               if (!isResolved) {
                 isResolved = true;
+                clearTimeout(timeoutHandle);
                 reject(err);
               }
             }
