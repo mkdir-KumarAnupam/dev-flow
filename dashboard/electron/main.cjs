@@ -116,6 +116,61 @@ function setupLiveWatcher() {
 
 setupLiveWatcher();
 
+let workspaceWatcher = null;
+function setupWorkspaceWatcher() {
+  try {
+    const chokidar = require('chokidar');
+    const fs = require('fs-extra');
+    const path = require('path');
+    const home = process.env.HOME || process.env.USERPROFILE || "";
+    const defaultPath = path.join(home, 'projects');
+    const targetPath = devosSettings.workspacePath || defaultPath;
+    
+    if (!fs.existsSync(targetPath)) return;
+
+    // Watch for new package.json files up to 2 directories deep
+    workspaceWatcher = chokidar.watch(path.join(targetPath, '*/package.json'), { ignoreInitial: true, depth: 1 });
+    workspaceWatcher.on('add', async (filePath) => {
+      try {
+        const projectDir = path.dirname(filePath);
+        const pkg = await fs.readJson(filePath);
+        const projectName = pkg.name || path.basename(projectDir);
+        
+        const cliDir = path.join(home, '.dev-cli');
+        const projectsFile = path.join(cliDir, "projects.json");
+        let projects = {};
+        try { projects = await fs.readJson(projectsFile); } catch(e) {}
+        
+        const existingKey = Object.keys(projects).find(k => projects[k].path === projectDir);
+        if (!existingKey) {
+          const newId = Date.now().toString();
+          projects[newId] = {
+            id: newId,
+            name: projectName,
+            path: projectDir,
+            type: "React/Web", // default assumption
+            color: "violet",
+            lastModified: new Date().toISOString()
+          };
+          await fs.writeJson(projectsFile, projects, { spaces: 2 });
+          console.log(`Auto-detected new project: ${projectName}`);
+          
+          // Emit IPC event to frontend to refresh workspace
+          const bw = require('electron').BrowserWindow.getAllWindows()[0];
+          if (bw) {
+            bw.webContents.send('new-project-detected', projectDir);
+          }
+        }
+      } catch(e) {
+        console.error("Error auto-adding new project:", e);
+      }
+    });
+  } catch(e) {
+    console.error("Failed to setup workspace watcher", e);
+  }
+}
+setupWorkspaceWatcher();
+
 
 async function syncDashboardMetrics() {
   if (!fbInitialized) return;
@@ -1787,7 +1842,7 @@ function createWindow() {
   
   ipcMain.handle('start-project-tunnel', async (e, projectPath) => {
     try {
-      return await new Promise((resolve, reject) => {
+      return await new Promise(async (resolve, reject) => {
         const { spawn } = require('child_process');
         const localtunnel = require('localtunnel');
         const fs = require('fs');
@@ -1821,6 +1876,23 @@ function createWindow() {
           }
         } catch(e) {}
         
+        const nodeModulesPath = path.join(projectPath, 'node_modules');
+        if (!fs.existsSync(nodeModulesPath)) {
+          console.log(`Auto-installing dependencies for ${projectPath} using ${pm}...`);
+          try {
+             await new Promise((res, rej) => {
+               const installChild = spawn(pm, ['install'], { cwd: projectPath, env: envs, shell: true });
+               installChild.on('exit', (code) => {
+                 if (code === 0) res(null);
+                 else rej(new Error('Install failed with code ' + code));
+               });
+               installChild.on('error', rej);
+             });
+          } catch(e) {
+             return reject(e);
+          }
+        }
+
         const child = spawn(pm, ['run', 'dev'], { cwd: projectPath, env: envs, shell: true });
         
         let portFound = false;
