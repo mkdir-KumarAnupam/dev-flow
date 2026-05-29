@@ -1,28 +1,7 @@
 // @ts-nocheck
 import { useEffect, useState, } from 'react';
 
-
-
-import {
-  XAxis, YAxis, CartesianGrid, AreaChart, Area, PieChart, Pie, Cell,
-  RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, BarChart, Bar,
-  LineChart, Line, Tooltip, ResponsiveContainer, Legend
-} from 'recharts';
-import {
-  Code, Clock, Trophy, FolderGit2, Search, X,
-  Flame, Target, Zap, Camera, PenTool, ExternalLink,
-  Layers, Activity, Play, Trash2, FileCode, FolderOpen,
-  Box, ArrowRight, Plus,
-  Sun, Sunset, Moon, Sword, Code2, Timer, Square, Monitor, CheckCircle2, Palette,
-  User, Tag, AlertTriangle, FlaskConical, Cloud, Globe, Server, RefreshCw, Triangle, QrCode, Wifi
-} from 'lucide-react';
-import RaceMode from './RaceMode';
-import WarMode from './WarMode';
-import SystemDesignMode from './SystemDesignMode';
-import Whiteboard from './Whiteboard';
-import CompetitiveMode from './CompetitiveMode';
-import Playground from './Playground';
-
+import { Code, Clock, FolderGit2, Search, X, Flame, Target, Zap, Camera, Layers, Activity, Play, Trash2, FileCode, FolderOpen, Box, Sun, Sunset, Moon, Sword, Timer, User, Tag, FlaskConical, Cloud, Globe, Server, RefreshCw, Wifi } from 'lucide-react';
 const API_BASE =
   typeof window !== 'undefined' &&
   window.location.protocol.startsWith('http') &&
@@ -33,16 +12,8 @@ const apiUrl = (path: string) => `${API_BASE}${path.startsWith('/') ? path : `/$
 const isElectronRuntime = () =>
   typeof window !== 'undefined' && typeof (window as any).require === 'function';
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { motion, AnimatePresence } from "framer-motion";
 import { QRCodeSVG } from 'qrcode.react';
-
-import TrendArrowIcon from './components/ui/TrendArrowIcon';
-import MetricCard from './components/ui/MetricCard';
-import SectionHeader from './components/ui/SectionHeader';
-import LiveDateTimeClock from './components/ui/LiveDateTimeClock';
-import ActivityHeatmapGrid from './components/ui/ActivityHeatmapGrid';
 
 import SetupOnboardingScreen from './components/features/SetupOnboardingScreen';
 import DashboardOverviewTab from './components/views/DashboardOverviewTab';
@@ -54,8 +25,6 @@ import DeveloperPlaygroundTab from './components/views/DeveloperPlaygroundTab';
 
 import GlobalCommandPalette from './components/features/GlobalCommandPalette';
 
-
-
 /* ─── animation variants ─── */
 const cV: any = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.04, delayChildren: 0.05 } } };
 const iV: any = { hidden: { opacity: 0, y: 14, scale: 0.98 }, show: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", stiffness: 280, damping: 24 } } };
@@ -63,8 +32,6 @@ const mV: any = { hidden: { opacity: 0, scale: 0.95, y: 10 }, show: { opacity: 1
 const fadeUp: any = { hidden: { opacity: 0, y: 8 }, show: { opacity: 1, y: 0, transition: { duration: 0.3 } } };
 
 /* ─── components ─── */
-
-
 
 const getGreeting = () => {
   const h = new Date().getHours();
@@ -91,8 +58,6 @@ function AppContent() {
     return <SetupOnboardingScreen onComplete={() => setSetupRequired(false)} />;
   }
 
-
-
   /* ─── RENDER ─── */
   return (
     <div className={theme === 'dark' ? 'dark' : ''}>
@@ -117,7 +82,6 @@ function AppContent() {
                 <motion.div variants={cV} initial="hidden" animate="show" className="max-w-[1400px] mx-auto space-y-4">
 
             {/* ═══ HEADER ═══ */}
-            
 
             <AnimatePresence>
               {showRemoteQRCode && (
@@ -199,8 +163,6 @@ function AppContent() {
               )}
             </AnimatePresence>
 
-
-
           <AnimatePresence mode="wait">
             {activeTab === 'Overview' && <DashboardOverviewTab />}
             {activeTab === 'Workspace' && <AssetWorkspaceTab />}
@@ -209,15 +171,6 @@ function AppContent() {
             {activeTab === 'Focus' && <FocusTimerTab />}
             {activeTab === 'Playground' && <DeveloperPlaygroundTab />}
           </AnimatePresence>
-
-          
-
-          
-
-          
-           
-          
-
 
         </motion.div>
       </div>
