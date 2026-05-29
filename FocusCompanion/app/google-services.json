@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "631444025906",
+    "project_id": "devcli-e1bc5",
+    "storage_bucket": "devcli-e1bc5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:631444025906:android:fc48f722d45571d8c4422b",
+        "android_client_info": {
+          "package_name": "com.example.focuscompanion"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjCDeQT8unrW5g-dJyUrADj0w5Rur-_N0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

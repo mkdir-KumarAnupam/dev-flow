@@ -1,0 +1,43 @@
+{
+  "name": "dev-cli",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "dev": "dist/index.js"
+  },
+  "scripts": {
+    "dev": "node --no-deprecation --import ./register-ts-node.mjs src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "relink": "npm run build && npm link"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "boxen": "^8.0.1",
+    "chalk": "^5.6.2",
+    "chokidar": "^4.0.3",
+    "cli-highlight": "^2.1.11",
+    "clipboardy": "^4.0.0",
+    "commander": "^14.0.3",
+    "cors": "^2.8.6",
+    "execa": "^9.6.1",
+    "express": "^5.2.1",
+    "firebase-admin": "^13.10.0",
+    "fs-extra": "^11.3.5",
+    "inquirer": "^13.4.3",
+    "open": "^11.0.0",
+    "ora": "^9.4.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^25.8.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
+  }
+}

@@ -1,0 +1,47 @@
+[
+  {
+    "name": "workflow",
+    "type": "nextjs",
+    "description": "A fast-started development environment.",
+    "path": "C:\\Users\\kranu\\projects\\workflow",
+    "editor": "code",
+    "packageManager": "pnpm",
+    "createdAt": "2026-05-18T00:16:51.509Z",
+    "tags": [
+      "shell"
+    ],
+    "linear": {
+      "projectId": "d392f021-ff95-45a6-a997-6a13c40be40a",
+      "projectUrl": "https://linear.app/terminalspace/project/workflow-594462c620b0",
+      "syncedAt": "2026-05-18T00:16:51.509Z",
+      "status": "synced",
+      "deadline": "2026-05-13",
+      "priority": "medium"
+    },
+    "workspace": {
+      "restoreCommand": "pnpm dev",
+      "devServer": {
+        "command": "pnpm dev",
+        "pid": 27204,
+        "startedAt": "2026-05-18T00:16:51.245Z",
+        "status": "running",
+        "message": "Started in a separate terminal window."
+      }
+    }
+  },
+  {
+    "name": "Sysker",
+    "type": "Sys-Workflow",
+    "description": "Just a little waste",
+    "path": "C:\\Users\\kranu\\projects\\Sysker",
+    "editor": "code",
+    "createdAt": "2026-05-17T19:34:12.974Z",
+    "tags": [],
+    "deployment": {
+      "status": "failed",
+      "target": "Render",
+      "url": "NIL",
+      "updatedAt": "2026-05-17T21:55:44.649Z"
+    }
+  }
+]

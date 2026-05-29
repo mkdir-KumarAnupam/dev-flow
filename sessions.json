@@ -1,0 +1,25 @@
+[
+  {
+    "id": "C:\\dev-cli:2026-05-18T00:17:33.906Z",
+    "project": "dev-cli",
+    "contextKind": "workspace",
+    "path": "C:\\dev-cli",
+    "status": "paused",
+    "summary": "Clearing out the session logs",
+    "nextAction": "Build the next stage of samples",
+    "notes": "Dont delete the hitch folder",
+    "openFiles": [],
+    "runningServices": [
+      "Localhost"
+    ],
+    "startedAt": "2026-05-18T00:17:33.906Z",
+    "endedAt": "2026-05-18T00:17:33.906Z",
+    "durationMinutes": 0,
+    "tags": [
+      "None"
+    ],
+    "editor": "code",
+    "createdAt": "2026-05-18T00:17:33.906Z",
+    "updatedAt": "2026-05-18T00:17:33.906Z"
+  }
+]

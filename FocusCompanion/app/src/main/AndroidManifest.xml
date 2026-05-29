@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:windowSoftInputMode="adjustResize"
+        android:usesCleartextTraffic="true"
+        android:theme="@style/Theme.FocusCompanion">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    
+        
+    
+        
+
+        <receiver android:name=".GraphWidgetProvider" android:label="DevOS Graph" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/graph_widget_info" />
+        </receiver>
+
+        <receiver android:name=".StreakWidgetProvider" android:label="DevOS Streak" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_info_streak" />
+        </receiver>
+
+        <receiver android:name=".SolvedWidgetProvider" android:label="DevOS Solved" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_info_solved" />
+        </receiver>
+
+        <receiver android:name=".LocWidgetProvider" android:label="DevOS LOC" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_info_loc" />
+        </receiver>
+
+        <receiver android:name=".DeepWorkWidgetProvider" android:label="DevOS Deep Work" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_info_deepwork" />
+        </receiver>
+
+        <receiver android:name=".AvgFlowWidgetProvider" android:label="DevOS Avg Flow" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_info_avgflow" />
+        </receiver>
+
+        <receiver android:name=".PracticeWidgetProvider" android:label="DevOS Practice" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_info_practice" />
+        </receiver>
+
+        <receiver android:name=".LastProjectWidgetProvider" android:label="DevOS Last Project" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_info_lastproject" />
+        </receiver>
+
+        <receiver android:name=".UncommittedWidgetProvider" android:label="DevOS Uncommitted" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_info_uncommitted" />
+        </receiver>
+
+        <receiver android:name=".HeatmapWidgetProvider" android:label="DevOS Activity Pulse" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_info_heatmap" />
+        </receiver>
+
+        <receiver android:name=".SubmissionWidgetProvider" android:label="DevOS Latest Submission" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_info_submission" />
+        </receiver>
+</application>
+
+</manifest>

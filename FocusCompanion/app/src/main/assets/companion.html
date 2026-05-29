@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Focus Companion</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { background-color: #07070a; color: #f8fafc; font-family: 'Inter', system-ui, -apple-system, sans-serif; overflow: hidden; overscroll-behavior: none; }
+    
+    .glass-panel { 
+      background: rgba(20, 20, 25, 0.4); 
+      backdrop-filter: blur(24px); 
+      -webkit-backdrop-filter: blur(24px); 
+      border: 1px solid rgba(255, 255, 255, 0.05); 
+    }
+    
+    .time-font { font-family: 'JetBrains Mono', monospace; font-weight: 800; letter-spacing: 0.05em; }
+
+    .glow-ring {
+      box-shadow: inset 0 0 60px rgba(139, 92, 246, 0.1);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+    }
+    .glow-ring.active {
+      box-shadow: inset 0 0 100px rgba(139, 92, 246, 0.2), 0 0 60px rgba(139, 92, 246, 0.15);
+      border-color: rgba(139, 92, 246, 0.5);
+    }
+    
+    .report-card {
+      background: linear-gradient(180deg, rgba(30,30,40,0.8) 0%, rgba(15,15,20,0.9) 100%);
+      border: 1px solid rgba(255,255,255,0.05);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+  
+    /* Landscape Support */
+    @media (min-width: 600px) and (orientation: landscape) {
+      #activeSessionView {
+        flex-direction: row;
+        justify-content: center;
+        gap: 2rem;
+      }
+      .stats-panel {
+        margin-top: 0 !important;
+        max-width: 300px;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+      .stats-panel > div {
+        border-right: none !important;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        padding-bottom: 1rem;
+        width: 100%;
+      }
+      .stats-panel > div:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+      }
+    }
+  </style>
+</head>
+<body class="h-screen w-screen flex flex-col items-center justify-center relative p-6">
+  
+  <div id="ambientGlow" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-violet-900/10 rounded-full blur-[120px] transition-colors duration-1000 pointer-events-none"></div>
+
+  <div id="content" class="w-full max-w-md flex flex-col items-center z-10 transition-opacity duration-500 opacity-0 relative">
+
+    <div id="activeSessionView" class="w-full flex flex-col items-center transition-all duration-500">
+      <!-- Main Timer Circle -->
+      <div id="timerContainer" class="relative w-[320px] h-[320px] rounded-full glow-ring flex flex-col items-center justify-center transition-all duration-1000 ease-out bg-[#0a0a0f]/80 backdrop-blur-xl">
+        <svg class="absolute inset-0 w-full h-full -rotate-90 z-20 pointer-events-none" style="padding: 10px;">
+          <circle cx="150" cy="150" r="140" stroke="rgba(255,255,255,0.03)" stroke-width="2" fill="none" />
+          <circle id="progressCircle" cx="150" cy="150" r="140" stroke="#8b5cf6" stroke-width="6" fill="none" stroke-linecap="round" stroke-dasharray="879.64" stroke-dashoffset="879.64" class="transition-all duration-500 ease-linear" />
+        </svg>
+        <div id="timeText" class="text-[72px] leading-none text-slate-400 mt-4 z-10 time-font transition-colors duration-500 tracking-tighter">00:00</div>
+        <div id="statusLabel" class="mt-4 text-[10px] font-bold uppercase tracking-[0.3em] text-slate-500 z-10 transition-colors">SESSION LENGTH</div>
+      </div>
+      
+      <!-- Desktop UI Parity: Stats Bar -->
+      <div class="flex flex-col md:flex-row gap-6 w-full">
+        <div class="stats-panel w-full mt-10 p-4 glass-panel rounded-2xl flex justify-between items-center text-center">
+          <div class="flex-1 flex flex-col gap-1 border-r border-slate-700/50">
+            <span class="text-[9px] font-bold uppercase tracking-widest text-slate-500">Activity</span>
+            <div class="flex items-center justify-center gap-1.5 mt-1">
+              <div id="activityDot" class="w-2 h-2 rounded-full bg-slate-500"></div>
+              <span id="activityText" class="text-xs font-bold text-slate-300">Idle</span>
+            </div>
+          </div>
+          <div class="flex-1 flex flex-col gap-1 border-r border-slate-700/50">
+            <span class="text-[9px] font-bold uppercase tracking-widest text-slate-500">Flow Score</span>
+            <span id="flowScoreText" class="text-lg font-black text-slate-300 mt-0.5">0</span>
+          </div>
+          <div class="flex-1 flex flex-col gap-1">
+            <span class="text-[9px] font-bold uppercase tracking-widest text-slate-500">Streak</span>
+            <span id="streakText" class="text-lg font-black text-slate-300 mt-0.5">0<span class="text-[10px] text-slate-500 ml-0.5">m</span></span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div id="offlineOverlay" class="absolute inset-0 bg-[#07070a]/95 backdrop-blur-md flex flex-col items-center justify-center z-20 transition-opacity duration-500 opacity-100 pointer-events-auto">
+    <div class="w-12 h-12 rounded-full border-[3px] border-slate-800 border-t-violet-500 animate-spin mb-6"></div>
+    <p class="text-[10px] font-bold uppercase tracking-[0.3em] text-slate-400">Syncing</p>
+  </div>
+  
+  <script>
+    const timeText = document.getElementById('timeText');
+    const statusLabel = document.getElementById('statusLabel');
+    const progressCircle = document.getElementById('progressCircle');
+    const offlineOverlay = document.getElementById('offlineOverlay');
+    const content = document.getElementById('content');
+    const timerContainer = document.getElementById('timerContainer');
+    const ambientGlow = document.getElementById('ambientGlow');
+    
+    const activeSessionView = document.getElementById('activeSessionView');
+    
+    // Stats Bar
+    const activityDot = document.getElementById('activityDot');
+    const activityText = document.getElementById('activityText');
+    const flowScoreText = document.getElementById('flowScoreText');
+    const streakText = document.getElementById('streakText');
+    
+    const circumference = 879.64; // 2 * PI * 140
+    let isSessionActive = false;
+    let animationFrameId = null;
+    let syncTarget = 0;
+    let startTime = 0;
+    
+    let hasLoadedLive = false;
+
+    let lastElapsedSeconds = 0;
+    let currentCategory = "idle";
+    
+    function updateClockUI() {
+      if (!isSessionActive) return;
+      
+      const now = Date.now();
+      let left = 0;
+      
+      if (currentCategory === "break") {
+        left = Math.max(0, syncTarget - lastElapsedSeconds);
+      } else {
+        const localElapsed = (now - startTime) / 1000;
+        if (syncTarget > 0) {
+          left = Math.max(0, syncTarget - localElapsed);
+        } else {
+          left = localElapsed;
+        }
+      }
+      
+      const percent = syncTarget > 0 ? Math.min(1, left / syncTarget) : 0;
+      progressCircle.style.strokeDashoffset = circumference - percent * circumference;
+      
+      const m = String(Math.floor(left / 60)).padStart(2, '0');
+      const s = String(Math.floor(left % 60)).padStart(2, '0');
+      timeText.textContent = m + ':' + s;
+      
+      animationFrameId = requestAnimationFrame(updateClockUI);
+    }
+
+    window.updateFocusLive = function(dataStr) {
+      hasLoadedLive = true;
+      offlineOverlay.classList.remove('opacity-100');
+      offlineOverlay.classList.add('opacity-0', 'pointer-events-none');
+      content.classList.remove('opacity-0');
+
+      let data = {};
+      try { data = JSON.parse(dataStr); } catch(e){}
+
+      if (data && data.active) {
+        isSessionActive = true;
+        
+        lastElapsedSeconds = data.elapsedSeconds || 0;
+        syncTarget = data.targetSeconds || (data.durationMinutes ? data.durationMinutes * 60 : 0);
+        startTime = data.startTime || (Date.now() - (lastElapsedSeconds)*1000);
+        
+        if (!animationFrameId) {
+           animationFrameId = requestAnimationFrame(updateClockUI);
+        }
+        
+        timerContainer.classList.add('active');
+        timeText.classList.remove('text-slate-400');
+        timeText.classList.add('text-white');
+        
+        const category = data.category || 'coding';
+        currentCategory = category;
+        
+        if (category === 'break') {
+          ambientGlow.className = "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-teal-600/20 rounded-full blur-[120px] transition-colors duration-1000 pointer-events-none";
+          progressCircle.style.stroke = "#14b8a6"; 
+          statusLabel.textContent = "ON BREAK";
+          statusLabel.className = "mt-4 text-[10px] font-bold uppercase tracking-[0.3em] text-teal-300 z-10 transition-colors";
+          activityDot.className = "w-2 h-2 rounded-full bg-teal-500 shadow-[0_0_8px_rgba(20,184,166,0.8)]";
+          activityText.textContent = "Break";
+        }
+
+        if (category === 'coding') {
+          ambientGlow.className = "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-violet-600/20 rounded-full blur-[120px] transition-colors duration-1000 pointer-events-none";
+          progressCircle.style.stroke = "#8b5cf6"; 
+          statusLabel.textContent = "DEEP WORK";
+          statusLabel.className = "mt-4 text-[10px] font-bold uppercase tracking-[0.3em] text-violet-300 z-10 transition-colors";
+          activityDot.className = "w-2 h-2 rounded-full bg-violet-500 shadow-[0_0_8px_rgba(139,92,246,0.8)]";
+          activityText.textContent = "Coding";
+        } else if (category === 'research') {
+          ambientGlow.className = "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-600/20 rounded-full blur-[120px] transition-colors duration-1000 pointer-events-none";
+          progressCircle.style.stroke = "#3b82f6"; 
+          statusLabel.textContent = "RESEARCH";
+          statusLabel.className = "mt-4 text-[10px] font-bold uppercase tracking-[0.3em] text-blue-300 z-10 transition-colors";
+          activityDot.className = "w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)]";
+          activityText.textContent = "Research";
+        } else if (category === 'distraction') {
+          ambientGlow.className = "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-rose-600/20 rounded-full blur-[120px] transition-colors duration-1000 pointer-events-none";
+          progressCircle.style.stroke = "#e11d48"; 
+          statusLabel.textContent = "DISTRACTED";
+          statusLabel.className = "mt-4 text-[10px] font-bold uppercase tracking-[0.3em] text-rose-300 z-10 transition-colors";
+          activityDot.className = "w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(225,29,72,0.8)] animate-pulse";
+          activityText.textContent = "Distracted";
+        }
+        
+        flowScoreText.textContent = data.flowScore !== undefined ? data.flowScore : (data.score || "100");
+        streakText.innerHTML = `${Math.floor((data.currentStreak || 0) / 60)}<span class="text-[10px] text-slate-500 ml-0.5">m</span>`;
+        
+      } else {
+        isSessionActive = false;
+        if (animationFrameId) {
+           cancelAnimationFrame(animationFrameId);
+           animationFrameId = null;
+        }
+      
+        timeText.textContent = "00:00";
+        timeText.classList.remove('text-white');
+        timeText.classList.add('text-slate-400');
+        
+        progressCircle.style.strokeDashoffset = circumference;
+        progressCircle.style.stroke = "rgba(255,255,255,0.05)";
+        
+        timerContainer.classList.remove('active');
+        ambientGlow.className = "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/5 rounded-full blur-[120px] transition-colors duration-1000 pointer-events-none";
+        
+        statusLabel.textContent = "SESSION LENGTH";
+        statusLabel.className = "mt-4 text-[10px] font-bold uppercase tracking-[0.3em] text-slate-500 z-10 transition-colors";
+        
+        activityDot.className = "w-2 h-2 rounded-full bg-slate-500";
+        activityText.textContent = "Idle";
+        flowScoreText.textContent = "0";
+        streakText.innerHTML = `0<span class="text-[10px] text-slate-500 ml-0.5">m</span>`;
+      }
+    };
+  </script>
+</body>
+</html>

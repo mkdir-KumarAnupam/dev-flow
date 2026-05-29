@@ -1,0 +1,41 @@
+[
+  {
+    "id": "problem:codeforces:4A",
+    "name": "watermelon",
+    "type": "competitive",
+    "path": "C:\\Users\\kranu\\sandbox\\competitive\\codeforces\\math\\watermelon",
+    "language": "java",
+    "activity": "dsa-practice",
+    "createdAt": "2026-05-18T12:37:53.906Z",
+    "platform": "codeforces",
+    "difficulty": "easy",
+    "topic": "math",
+    "tags": [
+      "math"
+    ],
+    "history": [
+      {
+        "action": "assigned",
+        "at": "2026-05-18T12:37:53.906Z"
+      }
+    ]
+  },
+  {
+    "id": "university:C:\\Users\\kranu\\sandbox\\university\\sem-4\\java-and-oops\\java-etp-rev",
+    "name": "java-etp-rev",
+    "type": "university",
+    "path": "C:\\Users\\kranu\\sandbox\\university\\sem-4\\java-and-oops\\java-etp-rev",
+    "language": "java",
+    "activity": "exam-revision",
+    "createdAt": "2026-05-17T22:14:39.256Z",
+    "semester": 4,
+    "course": "Java and OOPs",
+    "tags": [],
+    "history": [
+      {
+        "action": "created",
+        "at": "2026-05-17T22:14:39.257Z"
+      }
+    ]
+  }
+]

@@ -1,0 +1,12 @@
+node_modules
+dist
+.env
+.dev-cli
+*.log
+.DS_Store
+release/
+dashboard/release/
+win-unpacked/
+*.exe
+*.asar
+firebase-service-account.json

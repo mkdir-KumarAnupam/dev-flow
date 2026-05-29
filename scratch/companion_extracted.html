@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Focus Companion</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body { background-color: #000000; color: #f8fafc; font-family: 'Inter', system-ui, -apple-system, sans-serif; overflow: hidden; overscroll-behavior: none; }
+    
+    .glass { 
+      background: rgba(10, 10, 10, 0.6); 
+      backdrop-filter: blur(20px); 
+      -webkit-backdrop-filter: blur(20px); 
+      border: 1px solid rgba(255, 255, 255, 0.08); 
+    }
+    
+    .glow-coding { box-shadow: 0 0 80px rgba(139, 92, 246, 0.25), inset 0 0 30px rgba(139, 92, 246, 0.1); border-color: rgba(139, 92, 246, 0.3); }
+    .glow-research { box-shadow: 0 0 80px rgba(59, 130, 246, 0.25), inset 0 0 30px rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3); }
+    .glow-distraction { box-shadow: 0 0 80px rgba(225, 29, 72, 0.3), inset 0 0 30px rgba(225, 29, 72, 0.15); border-color: rgba(225, 29, 72, 0.4); }
+    .glow-idle { box-shadow: 0 0 40px rgba(255, 255, 255, 0.05); }
+    
+    .pulse-distraction { animation: pulseDistraction 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+    @keyframes pulseDistraction { 
+      0% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.4), 0 0 80px rgba(225, 29, 72, 0.3); } 
+      70% { box-shadow: 0 0 0 20px rgba(225, 29, 72, 0), 0 0 80px rgba(225, 29, 72, 0.3); } 
+      100% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0), 0 0 80px rgba(225, 29, 72, 0.3); } 
+    }
+
+    .time-font { font-family: 'JetBrains Mono', monospace; }
+  </style>
+</head>
+<body class="h-screen w-screen flex flex-col items-center justify-center p-6 relative bg-black">
+  <!-- Subtle background ambient light -->
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div id="ambientGlow" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-white/5 rounded-full blur-[100px] transition-colors duration-1000"></div>
+  </div>
+
+  <div id="content" class="w-full max-w-sm flex flex-col items-center gap-12 z-10 transition-opacity duration-500">
+    
+    <div class="w-full flex justify-center pt-4">
+      <div class="glass rounded-full px-5 py-2 flex items-center justify-center min-w-[140px] max-w-[240px]">
+        <div id="targetPath" class="text-sm font-semibold text-slate-200 truncate">Ready</div>
+      </div>
+    </div>
+
+    <div id="timerContainer" class="relative w-[300px] h-[300px] rounded-full glass glow-idle flex flex-col items-center justify-center transition-all duration-1000 ease-out">
+      <svg class="absolute inset-0 w-full h-full -rotate-90 z-20 pointer-events-none" style="padding: 12px;">
+        <circle cx="138" cy="138" r="130" stroke="rgba(255,255,255,0.05)" stroke-width="4" fill="none" />
+        <circle id="progressCircle" cx="138" cy="138" r="130" stroke="#334155" stroke-width="6" fill="none" stroke-linecap="round" stroke-dasharray="816.81" stroke-dashoffset="0" class="transition-colors duration-500" />
+      </svg>
+      <div id="timeText" class="text-7xl font-bold tracking-tighter text-white mt-4 z-10 time-font">00:00</div>
+      <div id="distractionBadge" class="mt-4 px-4 py-1.5 bg-slate-800/80 text-slate-400 text-[10px] font-bold uppercase tracking-widest rounded-full z-10 transition-colors duration-300 border border-slate-700/50 cursor-pointer hover:bg-slate-700">IDLE</div>
+    </div>
+    
+    <div class="w-full flex justify-center mt-4">
+      <div id="contextBtn" class="flex items-center glass cursor-pointer rounded-full transition-all duration-500 ease-in-out overflow-hidden w-14 h-14 group relative hover:bg-white/5">
+        <div class="w-14 h-14 shrink-0 flex items-center justify-center z-10 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 group-hover:text-white transition-colors"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+        </div>
+        <p id="activeWindowText" class="text-xs font-mono text-slate-300 truncate tracking-tight whitespace-nowrap opacity-0 transition-all duration-400 ease-in-out w-0 transform translate-x-4">Waiting...</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="offlineOverlay" class="absolute inset-0 bg-black/95 backdrop-blur-md flex flex-col items-center justify-center z-20 transition-opacity duration-500 opacity-0 pointer-events-none">
+    <div class="w-10 h-10 rounded-full border-4 border-slate-800 border-t-slate-300 animate-spin mb-6"></div>
+    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Connecting</p>
+  </div>
+  
+  <div id="reportOverlay" class="absolute inset-0 bg-black/95 backdrop-blur-xl flex flex-col items-center justify-center z-30 transition-all duration-500 opacity-0 pointer-events-none translate-y-8 p-6">
+    <div class="w-full max-w-sm glass rounded-3xl p-8 flex flex-col items-center relative shadow-2xl">
+      <div class="w-14 h-14 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center mb-6">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+      </div>
+      <h2 class="text-2xl font-bold text-white mb-2">Session Complete</h2>
+      <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-8">Performance Report</p>
+      
+      <div class="w-full grid grid-cols-2 gap-4 mb-8">
+        <div class="bg-black/50 border border-white/5 rounded-2xl p-5 flex flex-col items-center">
+          <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2">Flow Score</p>
+          <p id="repScore" class="text-3xl font-bold text-emerald-400">--</p>
+        </div>
+        <div class="bg-black/50 border border-white/5 rounded-2xl p-5 flex flex-col items-center">
+          <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2">Code Added</p>
+          <p id="repLines" class="text-3xl font-bold text-violet-400">--</p>
+        </div>
+        <div class="bg-black/50 border border-white/5 rounded-2xl p-5 flex flex-col items-center">
+          <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2">Deep Work</p>
+          <p id="repDeep" class="text-xl font-bold text-slate-200">--</p>
+        </div>
+        <div class="bg-black/50 border border-white/5 rounded-2xl p-5 flex flex-col items-center">
+          <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2">Distractions</p>
+          <p id="repDistract" class="text-xl font-bold text-rose-400">--</p>
+        </div>
+      </div>
+      
+      <button id="closeReportBtn" class="w-full py-4 rounded-xl bg-white text-black font-bold text-sm transition-all active:scale-95 hover:bg-slate-200">
+        Close Report
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const timeText = document.getElementById('timeText');
+    const targetPath = document.getElementById('targetPath');
+    const progressCircle = document.getElementById('progressCircle');
+    const offlineOverlay = document.getElementById('offlineOverlay');
+    const content = document.getElementById('content');
+    const distractionBadge = document.getElementById('distractionBadge');
+    const timerContainer = document.getElementById('timerContainer');
+    const activeWindowText = document.getElementById('activeWindowText');
+    const reportOverlay = document.getElementById('reportOverlay');
+    const contextBtn = document.getElementById('contextBtn');
+    const ambientGlow = document.getElementById('ambientGlow');
+    
+    contextBtn.addEventListener('click', () => {
+      const isExpanded = contextBtn.classList.contains('w-[280px]');
+      if (isExpanded) {
+        contextBtn.classList.remove('w-[280px]');
+        contextBtn.classList.add('w-14');
+        activeWindowText.classList.remove('opacity-100', 'w-[220px]', 'translate-x-0', 'pr-4');
+        activeWindowText.classList.add('opacity-0', 'w-0', 'translate-x-4');
+      } else {
+        contextBtn.classList.remove('w-14');
+        contextBtn.classList.add('w-[280px]');
+        activeWindowText.classList.remove('opacity-0', 'w-0', 'translate-x-4');
+        activeWindowText.classList.add('opacity-100', 'w-[220px]', 'translate-x-0', 'pr-4');
+      }
+    });
+
+    const repScore = document.getElementById('repScore');
+    const repLines = document.getElementById('repLines');
+    const repDeep = document.getElementById('repDeep');
+    const repDistract = document.getElementById('repDistract');
+    const closeReportBtn = document.getElementById('closeReportBtn');
+    
+    const circumference = 816.81; // 2 * PI * 130
+    
+    let wasActive = false;
+    
+    // Smooth Sync State
+    let syncTarget = 0;
+    let syncElapsed = 0;
+    let lastSyncTime = Date.now();
+    let isSessionActive = false;
+    let animationFrameId = null;
+
+    async function fetchReport() {
+      try {
+        const res = await fetch('/api/focus/last-session');
+        const data = await res.json();
+        if (data && !data.error) {
+          repScore.textContent = data.flowScore || 0;
+          repLines.textContent = (data.locDelta > 0 ? '+' : '') + (data.locDelta || 0);
+          repDeep.textContent = Math.floor((data.codingSeconds || 0)/60) + "m";
+          repDistract.textContent = Math.floor((data.distractionSeconds || 0)/60) + "m";
+          
+          reportOverlay.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-8');
+          reportOverlay.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
+        }
+      } catch (e) {}
+    }
+    
+    closeReportBtn.addEventListener('click', () => {
+      reportOverlay.classList.add('opacity-0', 'pointer-events-none', 'translate-y-8');
+      reportOverlay.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+    });
+
+    // Clicking the badge acts as a "Stop Session" button
+    distractionBadge.addEventListener('click', async () => {
+      if (distractionBadge.textContent !== "IDLE" && distractionBadge.textContent !== "STOPPING...") {
+        distractionBadge.textContent = "STOPPING...";
+        await fetch('/api/focus/stop', { method: 'POST' });
+        poll();
+      }
+    });
+
+    // Local loop for 60fps perfectly smooth clock ticking
+    function updateClockUI() {
+      if (!isSessionActive) return;
+      
+      const now = Date.now();
+      const localElapsed = syncElapsed + ((now - lastSyncTime) / 1000);
+      const left = Math.max(0, syncTarget - localElapsed);
+      const percent = syncTarget > 0 ? Math.min(1, left / syncTarget) : 0;
+      
+      progressCircle.style.strokeDashoffset = circumference - percent * circumference;
+      
+      const m = String(Math.floor(left / 60)).padStart(2, '0');
+      const s = String(Math.floor(left % 60)).padStart(2, '0');
+      timeText.textContent = m + ':' + s;
+      
+      animationFrameId = requestAnimationFrame(updateClockUI);
+    }
+
+    async function poll() {
+      try {
+        const res = await fetch('/api/focus/live');
+        if (!res.ok) throw new Error('Network response was not ok');
+        const data = await res.json();
+        
+        offlineOverlay.classList.remove('opacity-100');
+        offlineOverlay.classList.add('opacity-0', 'pointer-events-none');
+        content.classList.remove('opacity-0');
+
+        if (data.active) {
+          wasActive = true;
+          isSessionActive = true;
+          
+          targetPath.textContent = data.projectName || data.windowTitle || "Active Session";
+          
+          // Update Sync State
+          syncTarget = data.targetSeconds || 0;
+          syncElapsed = data.elapsedSeconds || 0;
+          lastSyncTime = Date.now();
+          
+          // Start render loop if not running
+          if (!animationFrameId) {
+             animationFrameId = requestAnimationFrame(updateClockUI);
+          }
+          
+          activeWindowText.textContent = data.windowTitle || "Unknown Window";
+          
+          const category = data.category || 'idle';
+          timerContainer.className = "relative w-[300px] h-[300px] rounded-full glass flex flex-col items-center justify-center transition-all duration-1000 ease-out";
+          
+          if (category === 'coding') {
+            timerContainer.classList.add('glow-coding');
+            ambientGlow.className = "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-violet-600/10 rounded-full blur-[100px] transition-colors duration-1000";
+            progressCircle.style.stroke = "#8b5cf6"; 
+            distractionBadge.textContent = "DEEP WORK";
+            distractionBadge.className = "mt-4 px-4 py-1.5 bg-violet-500/20 text-violet-300 text-[10px] font-bold uppercase tracking-widest rounded-full z-10 transition-colors duration-500 border border-violet-500/30 cursor-pointer hover:bg-violet-500/30";
+          } else if (category === 'research') {
+            timerContainer.classList.add('glow-research');
+            ambientGlow.className = "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[100px] transition-colors duration-1000";
+            progressCircle.style.stroke = "#3b82f6"; 
+            distractionBadge.textContent = "RESEARCH";
+            distractionBadge.className = "mt-4 px-4 py-1.5 bg-blue-500/20 text-blue-300 text-[10px] font-bold uppercase tracking-widest rounded-full z-10 transition-colors duration-500 border border-blue-500/30 cursor-pointer hover:bg-blue-500/30";
+          } else if (category === 'distraction') {
+            timerContainer.classList.add('glow-distraction', 'pulse-distraction');
+            ambientGlow.className = "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-rose-600/10 rounded-full blur-[100px] transition-colors duration-1000";
+            progressCircle.style.stroke = "#e11d48"; 
+            distractionBadge.textContent = "DISTRACTED";
+            distractionBadge.className = "mt-4 px-4 py-1.5 bg-rose-500/20 text-rose-300 text-[10px] font-bold uppercase tracking-widest rounded-full z-10 transition-colors duration-500 border border-rose-500/30 cursor-pointer hover:bg-rose-500/30";
+          } else {
+            timerContainer.classList.add('glow-idle');
+            ambientGlow.className = "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-white/5 rounded-full blur-[100px] transition-colors duration-1000";
+            progressCircle.style.stroke = "#475569";
+            distractionBadge.textContent = "IDLE";
+            distractionBadge.className = "mt-4 px-4 py-1.5 bg-slate-800/80 text-slate-400 text-[10px] font-bold uppercase tracking-widest rounded-full z-10 transition-colors duration-500 border border-slate-700/50 cursor-pointer hover:bg-slate-700";
+          }
+          
+        } else {
+          isSessionActive = false;
+          if (animationFrameId) {
+             cancelAnimationFrame(animationFrameId);
+             animationFrameId = null;
+          }
+
+          if (wasActive) {
+            wasActive = false;
+            fetchReport();
+          }
+        
+          targetPath.textContent = "Ready";
+          timeText.textContent = "00:00";
+          progressCircle.style.strokeDashoffset = circumference;
+          progressCircle.style.stroke = "#334155";
+          
+          timerContainer.className = "relative w-[300px] h-[300px] rounded-full glass glow-idle flex flex-col items-center justify-center transition-all duration-1000 ease-out";
+          ambientGlow.className = "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-white/5 rounded-full blur-[100px] transition-colors duration-1000";
+          
+          distractionBadge.textContent = "IDLE";
+          distractionBadge.className = "mt-4 px-4 py-1.5 bg-slate-800/80 text-slate-500 text-[10px] font-bold uppercase tracking-widest rounded-full z-10 border border-slate-700/50 cursor-pointer hover:bg-slate-700";
+          activeWindowText.textContent = "Waiting for session...";
+        }
+      } catch (err) {
+        offlineOverlay.classList.remove('opacity-0', 'pointer-events-none');
+        offlineOverlay.classList.add('opacity-100');
+        content.classList.add('opacity-0');
+      }
+      
+      // Decouple polling completely from the tick loop!
+      // Only hit the server once every 2 seconds to avoid freezing
+      setTimeout(poll, 2000);
+    }
+
+    // Initialize
+    setTimeout(poll, 100);
+  </script>
+</body>
+</html>

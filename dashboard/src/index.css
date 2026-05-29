@@ -1,0 +1,255 @@
+@import "@fontsource-variable/outfit";
+@import url('https://cdn.jsdelivr.net/npm/firacode-nerd-font-web@2.1.0/css/fira-code.min.css');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *::-webkit-scrollbar {
+    display: none;
+  }
+  * {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.75rem;
+  }
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 262.1 83.3% 57.8%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 262.1 83.3% 57.8%;
+  }
+  .oled {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 0%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 0%;
+    --popover-foreground: 0 0% 98%;
+    --muted: 0 0% 5%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 0 0% 5%;
+    --accent-foreground: 0 0% 98%;
+    --border: 0 0% 12%;
+    --input: 0 0% 12%;
+    --ring: 262.1 83.3% 57.8%;
+  }
+  .brutal {
+    --background: 45 100% 96%;
+    --foreground: 0 0% 0%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 0%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 0%;
+    --muted: 0 0% 90%;
+    --muted-foreground: 0 0% 20%;
+    --accent: 0 0% 90%;
+    --accent-foreground: 0 0% 0%;
+    --border: 0 0% 0%;
+    --input: 0 0% 0%;
+    --ring: 0 0% 0%;
+    --radius: 0.25rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply text-foreground bg-slate-50 font-sans transition-colors duration-300 relative;
+    /* Soft light-mode mesh gradient */
+    background-image: 
+      radial-gradient(at 0% 0%, hsla(253, 16%, 94%, 1) 0px, transparent 60%),
+      radial-gradient(at 80% 0%, hsla(225, 39%, 95%, 1) 0px, transparent 60%),
+      radial-gradient(at 100% 100%, hsla(339, 49%, 95%, 1) 0px, transparent 60%),
+      radial-gradient(at 0% 100%, hsla(190, 80%, 94%, 1) 0px, transparent 60%),
+      radial-gradient(at 50% 50%, hsla(280, 50%, 96%, 1) 0px, transparent 60%);
+    background-size: 100vw 100vh;
+    background-attachment: fixed;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    background-image: url("./assets/noise.svg");
+    background-size: 250px 250px;
+    opacity: 0.07;
+    mix-blend-mode: multiply;
+  }
+
+  .dark body {
+    @apply text-slate-100;
+    background-color: #030014;
+    /* Deep glowing dark-mode mesh gradient */
+    background-image: 
+      radial-gradient(at 0% 0%, hsla(260, 40%, 15%, 1) 0px, transparent 50%),
+      radial-gradient(at 80% 0%, hsla(210, 50%, 12%, 1) 0px, transparent 50%),
+      radial-gradient(at 40% 50%, hsla(280, 40%, 10%, 1) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, hsla(340, 30%, 12%, 1) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, hsla(190, 40%, 10%, 1) 0px, transparent 50%);
+    background-size: 100vw 100vh;
+    background-attachment: fixed;
+  }
+
+  .dark body::before {
+    opacity: 0.04;
+    mix-blend-mode: screen;
+  }
+
+  .oled body {
+    background-image: none;
+    background-color: #000000;
+  }
+
+  .oled body::before {
+    display: none;
+  }
+
+  .brutal body {
+    @apply bg-[#fcfbe3] text-black;
+    background-image: radial-gradient(#0000001a 1.5px, transparent 1.5px);
+    background-size: 24px 24px;
+  }
+
+  .brutal body::before {
+    display: none;
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-white/40 dark:bg-slate-900/40 backdrop-blur-2xl border border-white/60 dark:border-white/10;
+    box-shadow: 
+      0 8px 32px 0 rgba(31, 38, 135, 0.07),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.8),
+      inset 1px 0 0 0 rgba(255, 255, 255, 0.4),
+      inset -1px 0 0 0 rgba(0, 0, 0, 0.05),
+      inset 0 -1px 0 0 rgba(0, 0, 0, 0.05);
+  }
+  .dark .glass-panel {
+    box-shadow: 
+      0 8px 32px 0 rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.15),
+      inset 1px 0 0 0 rgba(255, 255, 255, 0.05),
+      inset -1px 0 0 0 rgba(0, 0, 0, 0.2),
+      inset 0 -1px 0 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .glass-modal {
+    @apply bg-white/70 dark:bg-slate-900/70 backdrop-blur-3xl border border-white/60 dark:border-white/10 relative;
+    background-image: radial-gradient(circle, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+    background-size: 16px 16px;
+    box-shadow: 
+      0 24px 48px -12px rgba(31, 38, 135, 0.25),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.8),
+      inset 1px 0 0 0 rgba(255, 255, 255, 0.4),
+      inset -1px 0 0 0 rgba(0, 0, 0, 0.05),
+      inset 0 -1px 0 0 rgba(0, 0, 0, 0.05);
+  }
+  .dark .glass-modal {
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    box-shadow: 
+      0 24px 48px -12px rgba(0, 0, 0, 0.6),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.15),
+      inset 1px 0 0 0 rgba(255, 255, 255, 0.05),
+      inset -1px 0 0 0 rgba(0, 0, 0, 0.2),
+      inset 0 -1px 0 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .brutal .shadow-sm {
+    box-shadow: 4px 4px 0px 0px #000 !important;
+  }
+  .brutal .shadow-md {
+    box-shadow: 6px 6px 0px 0px #000 !important;
+  }
+  .brutal .shadow-lg {
+    box-shadow: 8px 8px 0px 0px #000 !important;
+  }
+  .brutal .hover\:shadow-md:hover {
+    box-shadow: 8px 8px 0px 0px #000 !important;
+    transform: translate(-2px, -2px) !important;
+  }
+  .brutal .border {
+    border-width: 2px !important;
+    border-color: #000 !important;
+  }
+  .brutal .rounded-3xl,
+  .brutal .rounded-2xl,
+  .brutal .rounded-xl,
+  .brutal .rounded-lg {
+    border-radius: 4px !important;
+  }
+  .brutal .rounded-full {
+    border-radius: 9999px !important; /* Keep circles circles */
+  }
+  .brutal .backdrop-blur-md {
+    backdrop-filter: none !important;
+    background-color: #ffffff !important;
+  }
+}
+
+/* ─── Ambient blob keyframes — GPU-only, zero JS ─── */
+@keyframes ambientDrift1 {
+  0%,100% { transform: translateX(-50%) translateY(0px) scale(1); }
+  25%      { transform: translateX(-20%) translateY(80px) scale(1.2); }
+  75%      { transform: translateX(-80%) translateY(-80px) scale(0.9); }
+}
+@keyframes ambientDrift2 {
+  0%,100% { transform: translateX(0px) translateY(0px) scale(1); }
+  30%      { transform: translateX(150px) translateY(-100px) scale(1.4); }
+  70%      { transform: translateX(-50px) translateY(100px) scale(1); }
+}
+@keyframes ambientDrift3 {
+  0%,100% { transform: translateX(0px) translateY(0px) scale(1); }
+  33%      { transform: translateX(-150px) translateY(100px) scale(0.8); }
+  66%      { transform: translateX(50px) translateY(-100px) scale(1.3); }
+}
+
+/* ─── Hide scrollbars for horizontal tag rows ─── */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

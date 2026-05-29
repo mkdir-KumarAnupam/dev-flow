@@ -1,0 +1,62 @@
+[
+  {
+    "platform": "codeforces",
+    "problemId": "4A",
+    "title": "Watermelon",
+    "slug": "watermelon",
+    "difficulty": "easy",
+    "topics": [
+      "math"
+    ],
+    "url": "https://codeforces.com/problemset/problem/4/A",
+    "language": "java",
+    "status": "solved",
+    "path": "C:\\Users\\kranu\\sandbox\\competitive\\codeforces\\math\\watermelon",
+    "startedAt": "2026-05-18T12:37:53.906Z",
+    "endedAt": "2026-05-18T12:38:12.790Z",
+    "timeSpentMinutes": 1,
+    "attempts": 1,
+    "notes": [],
+    "history": [
+      {
+        "action": "assigned",
+        "at": "2026-05-18T12:37:53.906Z"
+      },
+      {
+        "action": "solved",
+        "at": "2026-05-18T12:38:12.790Z",
+        "detail": "Saved reference solution: solutions\\2026-05-18T12-38-49-846Z-watermelon.java"
+      }
+    ]
+  },
+  {
+    "platform": "leetcode",
+    "problemId": 300,
+    "title": "Longest Increasing Subsequence",
+    "slug": "longest-increasing-subsequence",
+    "difficulty": "medium",
+    "topics": [
+      "dp",
+      "binary-search"
+    ],
+    "url": "https://leetcode.com/problems/longest-increasing-subsequence/",
+    "language": "java",
+    "status": "solved",
+    "path": "C:\\Users\\kranu\\sandbox\\competitive\\leetcode\\dp\\longest-increasing-subsequence",
+    "startedAt": "2026-05-17T23:10:50.036Z",
+    "endedAt": "2026-05-17T23:13:20.127Z",
+    "timeSpentMinutes": 3,
+    "attempts": 1,
+    "notes": [],
+    "history": [
+      {
+        "action": "assigned",
+        "at": "2026-05-17T23:10:50.036Z"
+      },
+      {
+        "action": "solved",
+        "at": "2026-05-17T23:13:20.127Z"
+      }
+    ]
+  }
+]
