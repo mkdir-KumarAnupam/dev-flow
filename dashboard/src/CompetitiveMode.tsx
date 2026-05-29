@@ -602,15 +602,17 @@ export default function CompetitiveMode({ onBack, practice = [] }: CompetitiveMo
       </div>
 
       {/* Configuration Modal */}
-      <AnimatePresence>
-        {showConfigModal && createPortal(
-          <motion.div 
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }} 
-            exit={{ opacity: 0 }} 
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-6" 
-            onClick={() => setShowConfigModal(false)}
-          >
+      {createPortal(
+        <AnimatePresence>
+          {showConfigModal && (
+            <motion.div 
+              key="config-modal"
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              exit={{ opacity: 0 }} 
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-6" 
+              onClick={() => setShowConfigModal(false)}
+            >
             <motion.div 
               initial={{ scale: 0.95, opacity: 0, y: 20, rotateX: 10 }} 
               animate={{ scale: 1, opacity: 1, y: 0, rotateX: 0 }} 
@@ -798,8 +800,10 @@ export default function CompetitiveMode({ onBack, practice = [] }: CompetitiveMo
               </div>
             </motion.div>
           </motion.div>
-        , document.body)}
-      </AnimatePresence>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
 
     </div>
   );
