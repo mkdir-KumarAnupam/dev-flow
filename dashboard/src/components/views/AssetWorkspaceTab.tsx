@@ -440,7 +440,7 @@ export default function AssetWorkspaceTab() {
             <motion.div variants={iV} className="h-full min-h-[200px]">
               <Card className="glass-panel shadow-sm h-full flex flex-col rounded-2xl hover:-translate-y-1 hover:shadow-lg transition-all">
                 <CardHeader className="pb-2 flex-shrink-0"><CardTitle className="text-sm">Deployments</CardTitle></CardHeader>
-                <CardContent className="flex-1 overflow-y-auto space-y-2">
+                <CardContent className="flex-1 overflow-y-auto space-y-2 pb-2">
                   {deployments.length > 0 ? deployments.slice(deploymentsPage * DEPLOYMENTS_PER_PAGE, (deploymentsPage + 1) * DEPLOYMENTS_PER_PAGE).map((d: any, i: number) => (
                     <div
                       key={i}
@@ -501,24 +501,14 @@ export default function AssetWorkspaceTab() {
                   )) : <p className="text-[10px] text-slate-400 w-full text-center py-4">No deployment configs found</p>}
                 </CardContent>
                 {deployments.length > DEPLOYMENTS_PER_PAGE && (
-                  <div className="flex justify-center items-center gap-2 pb-3">
-                    <button 
-                      disabled={deploymentsPage === 0}
-                      onClick={() => setDeploymentsPage(Math.max(0, deploymentsPage - 1))}
-                      className="px-2 py-1 text-[10px] bg-slate-100 dark:bg-slate-800 rounded disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
-                    >
-                      Prev
-                    </button>
-                    <span className="text-[10px] text-slate-500 font-medium">
-                      {deploymentsPage + 1} / {Math.ceil(deployments.length / DEPLOYMENTS_PER_PAGE)}
-                    </span>
-                    <button 
-                      disabled={deploymentsPage >= Math.ceil(deployments.length / DEPLOYMENTS_PER_PAGE) - 1}
-                      onClick={() => setDeploymentsPage(Math.min(Math.ceil(deployments.length / DEPLOYMENTS_PER_PAGE) - 1, deploymentsPage + 1))}
-                      className="px-2 py-1 text-[10px] bg-slate-100 dark:bg-slate-800 rounded disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
-                    >
-                      Next
-                    </button>
+                  <div className="flex justify-center items-center gap-1.5 pb-2 pt-0.5">
+                    {Array.from({ length: Math.ceil(deployments.length / DEPLOYMENTS_PER_PAGE) }).map((_, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setDeploymentsPage(idx)}
+                        className={`w-1.5 h-1.5 rounded-full transition-all ${deploymentsPage === idx ? 'bg-violet-500 scale-125' : 'bg-slate-300 dark:bg-slate-700 hover:bg-slate-400 dark:hover:bg-slate-600'}`}
+                      />
+                    ))}
                   </div>
                 )}
               </Card>
