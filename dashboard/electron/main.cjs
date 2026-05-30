@@ -1904,7 +1904,8 @@ function createWindow() {
           const out = data.toString();
           lastOutput += out;
           console.log(out);
-          const match = lastOutput.match(/http:\/\/(?:localhost|127\.0\.0\.1|0\.0\.0\.0):(\d+)/);
+          const cleanOutput = lastOutput.replace(/\x1b\[[0-9;]*[a-zA-Z]/g, '');
+          const match = cleanOutput.match(/http:\/\/(?:localhost|127\.0\.0\.1|0\.0\.0\.0):(\d+)/);
           if (match && !portFound) {
             portFound = true;
             const port = parseInt(match[1]);
