@@ -34,6 +34,9 @@ export default function AssetWorkspaceTab() {
   // We destructure everything from state since this is a massive legacy file
   const { tunnelingProject, setTunnelingProject, securityManagerOpen, setSecurityManagerOpen, isAppVisible, setIsAppVisible, setupRequired, setSetupRequired, devosSettings, setDevosSettings, data, setData, modalOpen, setModalOpen, search, setSearch, codeModal, setCodeModal, sketchModal, setSketchModal, captureModal, setCaptureModal, flowModalOpen, setFlowModalOpen, timeChartType, setTimeChartType, topicView, setTopicView, gitModalOpen, setGitModalOpen, theme, setTheme, arenaTab, setArenaTab, drilldown, setDrilldown, linearIssues, setLinearIssues, linearError, setLinearError, linearProjectFilter, setLinearProjectFilter, linearSortBy, setLinearSortBy, newIssueTitle, setNewIssueTitle, isCreatingIssue, setIsCreatingIssue, activeTab, setActiveTab, assetTab, setAssetTab, assetPage, setAssetPage, assetSearch, setAssetSearch, manageDeployment, setManageDeployment, isHealthChecking, setIsHealthChecking, createNewSketch, assetSort, setAssetSort, sortOpen, setSortOpen, draggedIssueId, setDraggedIssueId, linearProjectOpen, setLinearProjectOpen, linearSortOpen, setLinearSortOpen, linearSearchTerm, setLinearSearchTerm, linearAssigneeFilter, setLinearAssigneeFilter, linearLabelFilter, setLinearLabelFilter, linearAssigneeOpen, setLinearAssigneeOpen, linearLabelOpen, setLinearLabelOpen, selectedIssue, setSelectedIssue, focusLive, setFocusLive, focusRunning, setFocusRunning, focusDurationInput, setFocusDurationInput, focusTarget, setFocusTarget, showWindowSelector, setShowWindowSelector, showQRCode, setShowQRCode, showRemoteQRCode, setShowRemoteQRCode, focusStarting, setFocusStarting, sessionJustEnded, setSessionJustEnded, showReportModal, setShowReportModal, isGeneratingReport, setIsGeneratingReport, localIp, setLocalIp, tunnelUrl, setTunnelUrl, generateReport, startFocusSession, handleCreateIssue, handleDrop, updateLinearState, fetchAll, flow, practice, projects, sandboxes, sketches, captures, totalLoc, totalMin, totalHrs, totalCoding, totalResearch, totalDistraction, totalIdle, techstack, gitStatus, deployments, nowMs, weekMs, inLast7, inPrev7, curLoc, prevLoc, trendLoc, curMin, prevMin, trendHrs, flowScores, avgFlow, curFlowScores, prevFlowScores, curAvgFlow, prevAvgFlow, trendFlow, solved, totalPMin, langs, pracWithAcc, avgAcc, curPrac, prevPrac, curAvgAcc, prevAvgAcc, trendAcc, projTimeMap, projTimeBars, techstackBars, dayCounts, today, daysBack, startDate, hmData, startMs, activeDayCount, streak, topicC, diffC, topicBars, diffPie, timePie, timeBar, timeRadar, flowTL, locTL, radarData, recentSubs, resumeTarget, deleteFlow, openCode, resumeWork, openSandbox, remoteDashboardUrl } = state;
 
+  const [deploymentsPage, setDeploymentsPage] = useState(0);
+  const DEPLOYMENTS_PER_PAGE = 4;
+
   const fadeUp: any = { hidden: { opacity: 0, y: 8 }, show: { opacity: 1, y: 0, transition: { duration: 0.3 } } };
   const cV: any = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.04, delayChildren: 0.05 } } };
   const iV: any = { hidden: { opacity: 0, y: 14, scale: 0.98 }, show: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", stiffness: 280, damping: 24 } } };
@@ -438,7 +441,7 @@ export default function AssetWorkspaceTab() {
               <Card className="glass-panel shadow-sm h-full flex flex-col rounded-2xl hover:-translate-y-1 hover:shadow-lg transition-all">
                 <CardHeader className="pb-2 flex-shrink-0"><CardTitle className="text-sm">Deployments</CardTitle></CardHeader>
                 <CardContent className="flex-1 overflow-y-auto space-y-2">
-                  {deployments.length > 0 ? deployments.map((d: any, i: number) => (
+                  {deployments.length > 0 ? deployments.slice(deploymentsPage * DEPLOYMENTS_PER_PAGE, (deploymentsPage + 1) * DEPLOYMENTS_PER_PAGE).map((d: any, i: number) => (
                     <div
                       key={i}
                       className="relative flex items-center justify-between px-3 py-2.5 rounded-xl glass-panel border border-slate-100 dark:border-slate-700/60 group hover:border-violet-300/50 dark:hover:border-violet-700/50 hover:shadow-sm transition-all duration-200 overflow-hidden mb-2"
@@ -497,6 +500,27 @@ export default function AssetWorkspaceTab() {
                     </div>
                   )) : <p className="text-[10px] text-slate-400 w-full text-center py-4">No deployment configs found</p>}
                 </CardContent>
+                {deployments.length > DEPLOYMENTS_PER_PAGE && (
+                  <div className="flex justify-center items-center gap-2 pb-3">
+                    <button 
+                      disabled={deploymentsPage === 0}
+                      onClick={() => setDeploymentsPage(Math.max(0, deploymentsPage - 1))}
+                      className="px-2 py-1 text-[10px] bg-slate-100 dark:bg-slate-800 rounded disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                    >
+                      Prev
+                    </button>
+                    <span className="text-[10px] text-slate-500 font-medium">
+                      {deploymentsPage + 1} / {Math.ceil(deployments.length / DEPLOYMENTS_PER_PAGE)}
+                    </span>
+                    <button 
+                      disabled={deploymentsPage >= Math.ceil(deployments.length / DEPLOYMENTS_PER_PAGE) - 1}
+                      onClick={() => setDeploymentsPage(Math.min(Math.ceil(deployments.length / DEPLOYMENTS_PER_PAGE) - 1, deploymentsPage + 1))}
+                      className="px-2 py-1 text-[10px] bg-slate-100 dark:bg-slate-800 rounded disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                    >
+                      Next
+                    </button>
+                  </div>
+                )}
               </Card>
             </motion.div>
           </div>
