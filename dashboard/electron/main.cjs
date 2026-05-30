@@ -1899,6 +1899,19 @@ function createWindow() {
           }
         }
 
+        // Auto-patch Vite config to allow SSH tunnel hosts
+        const viteJs = path.join(projectPath, 'vite.config.js');
+        const viteTs = path.join(projectPath, 'vite.config.ts');
+        [viteJs, viteTs].forEach(cfg => {
+           if (fs.existsSync(cfg)) {
+             let c = fs.readFileSync(cfg, 'utf8');
+             if (!c.includes('allowedHosts:') && c.includes('defineConfig({')) {
+                c = c.replace(/defineConfig\(\s*\{/, "defineConfig({\n  server: { allowedHosts: true },");
+                fs.writeFileSync(cfg, c);
+             }
+           }
+        });
+
         const child = spawn(pm, ['run', 'dev'], { cwd: projectPath, env: envs, shell: true });
         
         let portFound = false;

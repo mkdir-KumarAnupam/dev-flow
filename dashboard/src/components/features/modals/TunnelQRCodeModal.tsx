@@ -13,11 +13,13 @@ const mV: any = {
 export default function TunnelQRCodeModal() {
   const { tunnelingProject, setTunnelingProject } = useGlobalApp();
   const [tunnelUrl, setTunnelUrl] = useState<string | null>(null);
+  const [localUrl, setLocalUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (tunnelingProject) {
       setTunnelUrl(null);
+      setLocalUrl(null);
       setError(null);
       let isMounted = true;
       (async () => {
@@ -28,9 +30,7 @@ export default function TunnelQRCodeModal() {
           } else {
             if (isMounted) {
                setTunnelUrl(res.url);
-               if (res.localUrl) {
-                  try { (window as any).require('electron').shell.openExternal(res.localUrl); } catch(e) {}
-               }
+               if (res.localUrl) setLocalUrl(res.localUrl);
             }
           }
         } catch (e: any) {
@@ -94,6 +94,14 @@ export default function TunnelQRCodeModal() {
                   <p className="text-[10px] text-slate-500 mt-4 max-w-[260px]">
                     Scan this QR code with your mobile device or share the link to preview the project live.
                   </p>
+                  {localUrl && (
+                    <button 
+                      onClick={() => { try { (window as any).require('electron').shell.openExternal(localUrl); } catch(e) {} }} 
+                      className="mt-4 px-4 py-2 bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400 text-xs font-bold rounded-lg hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-colors w-full max-w-xs mx-auto"
+                    >
+                      Open Localhost in Browser
+                    </button>
+                  )}
                 </>
               )}
             </div>
