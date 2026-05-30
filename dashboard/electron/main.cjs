@@ -609,11 +609,18 @@ function startServer() {
       const { issueId, stateId } = req.body;
       if (!issueId || !stateId) return res.status(400).json({ error: "Missing issueId or stateId" });
       
-      const q = `mutation { issueUpdate(id: "${issueId}", input: { stateId: "${stateId}" }) { success } }`;
+      const query = `
+        mutation IssueUpdate($id: String!, $stateId: String!) {
+          issueUpdate(id: $id, input: { stateId: $stateId }) {
+            success
+            issue { id state { id name type } }
+          }
+        }
+      `;
       const response = await fetch("https://api.linear.app/graphql", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: apiKey },
-        body: JSON.stringify({ query: q })
+        body: JSON.stringify({ query, variables: { id: issueId, stateId } })
       });
       if (!response.ok) throw new Error("Linear API request failed");
       const data = await response.json();

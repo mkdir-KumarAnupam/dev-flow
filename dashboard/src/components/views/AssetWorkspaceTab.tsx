@@ -35,7 +35,7 @@ export default function AssetWorkspaceTab() {
   const { tunnelingProject, setTunnelingProject, securityManagerOpen, setSecurityManagerOpen, isAppVisible, setIsAppVisible, setupRequired, setSetupRequired, devosSettings, setDevosSettings, data, setData, modalOpen, setModalOpen, search, setSearch, codeModal, setCodeModal, sketchModal, setSketchModal, captureModal, setCaptureModal, flowModalOpen, setFlowModalOpen, timeChartType, setTimeChartType, topicView, setTopicView, gitModalOpen, setGitModalOpen, theme, setTheme, arenaTab, setArenaTab, drilldown, setDrilldown, linearIssues, setLinearIssues, linearError, setLinearError, linearProjectFilter, setLinearProjectFilter, linearSortBy, setLinearSortBy, newIssueTitle, setNewIssueTitle, isCreatingIssue, setIsCreatingIssue, activeTab, setActiveTab, assetTab, setAssetTab, assetPage, setAssetPage, assetSearch, setAssetSearch, manageDeployment, setManageDeployment, isHealthChecking, setIsHealthChecking, createNewSketch, assetSort, setAssetSort, sortOpen, setSortOpen, draggedIssueId, setDraggedIssueId, linearProjectOpen, setLinearProjectOpen, linearSortOpen, setLinearSortOpen, linearSearchTerm, setLinearSearchTerm, linearAssigneeFilter, setLinearAssigneeFilter, linearLabelFilter, setLinearLabelFilter, linearAssigneeOpen, setLinearAssigneeOpen, linearLabelOpen, setLinearLabelOpen, selectedIssue, setSelectedIssue, focusLive, setFocusLive, focusRunning, setFocusRunning, focusDurationInput, setFocusDurationInput, focusTarget, setFocusTarget, showWindowSelector, setShowWindowSelector, showQRCode, setShowQRCode, showRemoteQRCode, setShowRemoteQRCode, focusStarting, setFocusStarting, sessionJustEnded, setSessionJustEnded, showReportModal, setShowReportModal, isGeneratingReport, setIsGeneratingReport, localIp, setLocalIp, tunnelUrl, setTunnelUrl, generateReport, startFocusSession, handleCreateIssue, handleDrop, updateLinearState, fetchAll, flow, practice, projects, sandboxes, sketches, captures, totalLoc, totalMin, totalHrs, totalCoding, totalResearch, totalDistraction, totalIdle, techstack, gitStatus, deployments, nowMs, weekMs, inLast7, inPrev7, curLoc, prevLoc, trendLoc, curMin, prevMin, trendHrs, flowScores, avgFlow, curFlowScores, prevFlowScores, curAvgFlow, prevAvgFlow, trendFlow, solved, totalPMin, langs, pracWithAcc, avgAcc, curPrac, prevPrac, curAvgAcc, prevAvgAcc, trendAcc, projTimeMap, projTimeBars, techstackBars, dayCounts, today, daysBack, startDate, hmData, startMs, activeDayCount, streak, topicC, diffC, topicBars, diffPie, timePie, timeBar, timeRadar, flowTL, locTL, radarData, recentSubs, resumeTarget, deleteFlow, openCode, resumeWork, openSandbox, remoteDashboardUrl } = state;
 
   const [deploymentsPage, setDeploymentsPage] = useState(0);
-  const DEPLOYMENTS_PER_PAGE = 4;
+  const DEPLOYMENTS_PER_PAGE = 3;
 
   const fadeUp: any = { hidden: { opacity: 0, y: 8 }, show: { opacity: 1, y: 0, transition: { duration: 0.3 } } };
   const cV: any = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.04, delayChildren: 0.05 } } };
@@ -47,7 +47,7 @@ export default function AssetWorkspaceTab() {
           <SectionHeader>Workspaces & Assets</SectionHeader>
           <motion.div variants={iV} className="mb-4 flex flex-col sm:flex-row gap-3 justify-between items-center glass-panel  rounded-2xl p-2  shadow-sm">
             <div className="flex gap-1 glass-panel text-muted-foreground p-1 rounded-xl">
-              {['Projects', 'Sandboxes', 'Sketches', 'Captures', 'Deployments'].map(tab => (
+              {['Projects', 'Sandboxes', 'Sketches', 'Captures'].map(tab => (
                 <button key={tab} onClick={() => { setAssetTab(tab as any); setAssetPage(0); setAssetSearch(""); setAssetSort('Default'); }} className={`px-5 py-2 text-[11px] font-bold rounded-xl transition-all ${assetTab === tab ? 'bg-white dark:bg-slate-800 text-violet-600 dark:text-violet-400 shadow-sm' : 'text-slate-500 hover:text-foreground dark:text-slate-400 dark:hover:text-slate-200'}`}>
                   {tab}
                 </button>
@@ -444,13 +444,14 @@ export default function AssetWorkspaceTab() {
                   {deployments.length > 0 ? deployments.slice(deploymentsPage * DEPLOYMENTS_PER_PAGE, (deploymentsPage + 1) * DEPLOYMENTS_PER_PAGE).map((d: any, i: number) => (
                     <div
                       key={i}
-                      className="relative flex items-center justify-between px-3 py-2.5 rounded-xl glass-panel border border-slate-100 dark:border-slate-700/60 group hover:border-violet-300/50 dark:hover:border-violet-700/50 hover:shadow-sm transition-all duration-200 overflow-hidden mb-2"
+                      onClick={() => setManageDeployment(d)}
+                      className="relative flex items-center justify-between px-3 py-2.5 rounded-xl glass-panel border border-slate-100 dark:border-slate-700/60 group hover:border-violet-300/50 dark:hover:border-violet-700/50 hover:shadow-sm transition-all duration-300 overflow-hidden mb-2 cursor-pointer"
                     >
                       {/* Glint line */}
                       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
 
                       {/* Left: status dot + name */}
-                      <div className="flex items-center gap-3 min-w-0">
+                      <div className="flex items-center gap-3 min-w-0 z-10 transition-all duration-300 group-hover:translate-y-10 group-hover:opacity-0">
                         {/* Status LED container */}
                         <div className="relative flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-800/80 dark:to-slate-900/80 border border-slate-200/60 dark:border-slate-700/60 shadow-[inset_0_1px_3px_rgba(0,0,0,0.05)] dark:shadow-[inset_0_1px_4px_rgba(0,0,0,0.5)]">
                           {/* Inner glass highlight */}
@@ -467,14 +468,14 @@ export default function AssetWorkspaceTab() {
                         {/* Name + subtitle */}
                         <div className="flex flex-col gap-0.5 min-w-0">
                           <p className="text-[13px] font-bold text-slate-800 dark:text-slate-100 truncate leading-none">{d.name}</p>
-                          <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-none mt-0.5 font-medium">
+                          <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-none mt-0.5 font-medium transition-opacity duration-200">
                             {d.status === 'Online' ? `${d.latency || 0}ms` : d.status === 'Offline' ? 'Offline' : 'Not deployed'}
                           </p>
                         </div>
                       </div>
 
                       {/* Right: provider pill */}
-                      <div className="flex-shrink-0">
+                      <div className="flex-shrink-0 z-10 transition-all duration-300 group-hover:translate-y-10 group-hover:opacity-0">
                         {d.target ? (
                           <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full border text-[10px] font-bold backdrop-blur-sm ${
                             d.target.toLowerCase().includes('vercel')   ? 'bg-white/5 border-white/10 dark:border-white/10 text-slate-300' :
@@ -496,6 +497,33 @@ export default function AssetWorkspaceTab() {
                         ) : (
                           <span className="text-[10px] text-slate-500 dark:text-slate-600">—</span>
                         )}
+                      </div>
+
+                      {/* Hover Overlay: Buttons & Ping Latency */}
+                      <div className="absolute top-0 bottom-0 left-[44px] right-3 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-y-4 group-hover:translate-y-0 z-0 pointer-events-none">
+                        <div className="flex flex-1 gap-1.5 mr-3">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (d.url) {
+                                try { (window as any).require("electron").shell.openExternal(d.url); } catch { window.open(d.url, '_blank'); }
+                              }
+                            }}
+                            className="pointer-events-auto flex-[2] h-6 flex items-center justify-center rounded-lg bg-gradient-to-b from-white/10 to-white/5 hover:from-white/15 hover:to-white/10 border border-white/10 dark:border-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.15),0_2px_4px_rgba(0,0,0,0.3)] text-[8px] font-extrabold text-slate-100 tracking-[0.1em] transition-all hover:scale-[1.02] active:scale-[0.98] active:shadow-inner"
+                          >
+                            OPEN DEPLOYMENT
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setManageDeployment(d);
+                            }}
+                            className="pointer-events-auto flex-1 h-6 flex items-center justify-center rounded-lg bg-gradient-to-b from-violet-500/40 to-violet-600/40 hover:from-violet-500/60 hover:to-violet-600/60 border border-violet-400/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1),0_2px_4px_rgba(0,0,0,0.2)] text-[8px] font-extrabold text-violet-100 tracking-[0.1em] transition-all hover:scale-[1.02] active:scale-[0.98] active:shadow-inner"
+                          >
+                            CONFIG
+                          </button>
+                        </div>
+                        <span className="text-[10px] font-bold text-emerald-400 flex-shrink-0">{d.latency || 0}ms</span>
                       </div>
                     </div>
                   )) : <p className="text-[10px] text-slate-400 w-full text-center py-4">No deployment configs found</p>}

@@ -122,18 +122,6 @@ export default function DashboardOverviewTab() {
                   <Lock className="h-4 w-4" />
                 </motion.button>
 
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setTheme(t => t === 'light' ? 'dark' : t === 'dark' ? 'oled' : t === 'oled' ? 'brutal' : 'light')}
-                  className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
-                  title="Toggle Theme"
-                >
-                  {theme === 'light' && <Sun className="h-4 w-4" />}
-                  {theme === 'dark' && <Moon className="h-4 w-4" />}
-                  {theme === 'oled' && <Monitor className="h-4 w-4 text-violet-400" />}
-                  {theme === 'brutal' && <Palette className="h-4 w-4 text-rose-500" />}
-                </motion.button>
 
                 <motion.button
                   whileHover={{ scale: 1.05, y: -1 }}

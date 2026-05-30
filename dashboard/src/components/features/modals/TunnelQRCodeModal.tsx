@@ -94,26 +94,33 @@ export default function TunnelQRCodeModal() {
                   <p className="text-[10px] text-slate-500 mt-4 max-w-[260px]">
                     Scan this QR code with your mobile device or share the link to preview the project live.
                   </p>
-                  {localUrl && (
-                    <button 
-                      onClick={() => { try { (window as any).require('electron').shell.openExternal(localUrl); } catch(e) {} }} 
-                      className="mt-4 px-4 py-2 bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400 text-xs font-bold rounded-lg hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-colors w-full max-w-xs mx-auto"
-                    >
-                      Open Localhost in Browser
-                    </button>
-                  )}
                 </>
               )}
             </div>
             
             <div className="bg-slate-50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 p-4 flex items-center justify-center">
-               <div className="flex items-center gap-2 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                  </span>
-                  {tunnelUrl ? "Tunnel Active" : error ? "Tunnel Inactive" : "Establishing Tunnel"}
-               </div>
+               {tunnelUrl && localUrl ? (
+                 <button 
+                   onClick={() => { try { (window as any).require('electron').shell.openExternal(localUrl); } catch(e) {} }} 
+                   className="flex items-center justify-center gap-2 px-6 py-2 bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400 text-[10px] font-bold tracking-widest uppercase rounded-lg hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-colors transition-transform active:scale-95"
+                 >
+                   <span className="relative flex h-2 w-2">
+                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                     <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                   </span>
+                   OPEN LOCALHOST
+                 </button>
+               ) : (
+                 <div className="flex items-center gap-2 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">
+                    {!error && (
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                      </span>
+                    )}
+                    {error ? "Tunnel Inactive" : "Establishing Tunnel"}
+                 </div>
+               )}
             </div>
           </motion.div>
         </div>
