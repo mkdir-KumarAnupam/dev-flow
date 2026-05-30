@@ -1840,9 +1840,14 @@ function createWindow() {
   // --- Course Hub IPC Handlers ---
   const coursesBaseDir = 'C:\\dev-cli\\courses';
 
-  
+  const activeTunnels = new Map();
+
   ipcMain.handle('start-project-tunnel', async (e, projectPath) => {
     try {
+      if (activeTunnels.has(projectPath)) {
+        console.log('Tunnel already running for: ' + projectPath);
+        return activeTunnels.get(projectPath);
+      }
       return await new Promise(async (resolve, reject) => {
         const { spawn } = require('child_process');
         const localtunnel = require('localtunnel');
@@ -1920,7 +1925,9 @@ function createWindow() {
                 if (sshMatch && !isResolved) {
                   isResolved = true;
                   clearTimeout(timeoutHandle);
-                  resolve({ url: sshMatch[0], localUrl: `http://localhost:${port}` });
+                  const resData = { url: sshMatch[0], localUrl: `http://localhost:${port}` };
+                  activeTunnels.set(projectPath, resData);
+                  resolve(resData);
                 }
               };
               
@@ -1958,6 +1965,7 @@ function createWindow() {
         });
 
         child.on('exit', (code) => {
+          activeTunnels.delete(projectPath);
           if (!isResolved) {
              isResolved = true;
              clearTimeout(timeoutHandle);
