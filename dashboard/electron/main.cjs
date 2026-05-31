@@ -378,6 +378,111 @@ function startServer() {
     }
   });
 
+  server.post("/api/settings/update", async (req, res) => {
+    try {
+      const updates = req.body;
+      const newSettings = { ...devosSettings, ...updates };
+      await fs.writeJson(settingsPath, newSettings, { spaces: 2 });
+      devosSettings = newSettings;
+      res.json({ success: true, settings: devosSettings });
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
+  });
+
+  server.get("/api/obsidian/notes", async (req, res) => {
+    try {
+      const vaultPath = devosSettings.obsidianVaultPath;
+      if (!vaultPath || !fs.pathExistsSync(vaultPath)) {
+        return res.json([]);
+      }
+      const devosNotesDir = path.join(vaultPath, "DevOS");
+      if (!fs.pathExistsSync(devosNotesDir)) {
+        return res.json([]);
+      }
+      const files = await fs.readdir(devosNotesDir);
+      const notes = [];
+      for (const file of files) {
+        if (file.endsWith(".md")) {
+          const content = await fs.readFile(path.join(devosNotesDir, file), "utf-8");
+          const stat = await fs.stat(path.join(devosNotesDir, file));
+          
+          let project = null;
+          let createdAt = stat.mtimeMs;
+          const tags = [];
+          
+          // Basic frontmatter parse
+          const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
+          let cleanContent = content;
+          if (frontmatterMatch) {
+            const fm = frontmatterMatch[1];
+            cleanContent = content.slice(frontmatterMatch[0].length).trim();
+            const projectMatch = fm.match(/project:\s*(.+)/);
+            if (projectMatch) project = projectMatch[1];
+            const dateMatch = fm.match(/date:\s*(.+)/);
+            if (dateMatch) createdAt = new Date(dateMatch[1]).getTime();
+          }
+
+          // Parse tags from the content
+          const tagRegex = /#(\w+)/g;
+          let match;
+          while ((match = tagRegex.exec(content)) !== null) {
+            if (!tags.includes(match[1])) {
+               tags.push(match[1]);
+            }
+          }
+
+          notes.push({ 
+            name: file.replace('.md', ''), 
+            filename: file, 
+            content: cleanContent, 
+            project,
+            tags,
+            createdAt 
+          });
+        }
+      }
+      notes.sort((a, b) => b.createdAt - a.createdAt);
+      res.json(notes);
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
+  });
+
+  server.post("/api/obsidian/note", async (req, res) => {
+    try {
+      const { content, project, tags, activeScreen } = req.body;
+      const vaultPath = devosSettings.obsidianVaultPath;
+      if (!vaultPath || !fs.pathExistsSync(vaultPath)) {
+        return res.status(400).json({ error: "Obsidian Vault path is not configured or does not exist." });
+      }
+
+      const devosNotesDir = path.join(vaultPath, "DevOS");
+      await fs.ensureDir(devosNotesDir);
+
+      let frontmatter = "---\n";
+      frontmatter += `date: ${new Date().toISOString()}\n`;
+      if (project) frontmatter += `project: ${project}\n`;
+      if (activeScreen) frontmatter += `context: ${activeScreen}\n`;
+      frontmatter += "---\n\n";
+
+      let noteBody = content;
+      if (tags && tags.length > 0) {
+        noteBody += "\n\n" + tags.map(t => `#${t}`).join(" ");
+      }
+
+      const fileContent = frontmatter + noteBody;
+      const firstLine = content.split('\n')[0].replace(/[^\w\s-]/gi, '').trim().split(' ').slice(0, 5).join('-');
+      const filename = `${Date.now()}-${firstLine || 'QuickNote'}.md`;
+      const filePath = path.join(devosNotesDir, filename);
+
+      await fs.writeFile(filePath, fileContent, "utf-8");
+      res.json({ success: true, filePath, filename });
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
+  });
+
   server.get("/api/flow", (req, res) => serveFile(res, "flow.json"));
   server.get("/api/projects", (req, res) => serveFile(res, "projects.json"));
   server.get("/api/sandboxes", (req, res) => serveFile(res, "sandboxes.json"));
@@ -1057,6 +1162,45 @@ console.log(JSON.stringify(results));
       res.json({ success: true, pid: 999999 });
     } catch (e) {
       res.status(500).json({ error: e.message });
+    }
+  });
+
+  server.get("/api/active-window", async (req, res) => {
+    try {
+      const psScript = `
+Add-Type -AssemblyName UIAutomationClient
+try {
+  $focused = [System.Windows.Automation.AutomationElement]::FocusedElement
+  if ($focused) {
+    $pid = $focused.Current.ProcessId
+    $p = Get-Process -Id $pid -ErrorAction SilentlyContinue
+    if ($p -and -not [string]::IsNullOrWhiteSpace($p.MainWindowTitle)) {
+      Write-Output $p.MainWindowTitle
+      exit
+    }
+  }
+} catch { }
+
+$proc = Get-Process | Where-Object { $_.MainWindowHandle -ne 0 -and -not [string]::IsNullOrWhiteSpace($_.MainWindowTitle) -and $_.ProcessName -match '(?i)^(chrome|msedge|firefox|brave|code|idea64|cursor|obsidian|notion|safari)$' } | Select-Object -First 1
+if ($proc) { 
+   Write-Output $proc.MainWindowTitle 
+} else {
+   $proc2 = Get-Process | Where-Object { $_.MainWindowHandle -ne 0 -and -not [string]::IsNullOrWhiteSpace($_.MainWindowTitle) -and $_.ProcessName -notmatch '(?i)^(explorer|ApplicationFrameHost|SystemSettings|TextInputHost|pwsh|cmd|conhost|node|electron)$' } | Select-Object -First 1
+   if ($proc2) { Write-Output $proc2.MainWindowTitle }
+}
+`;
+      
+      const child = exec('powershell -ExecutionPolicy Bypass -NoProfile -Command -', (err, stdout, stderr) => {
+        if (err || (stderr && stderr.trim() !== '')) {
+          console.error("Active Window Error:", stderr || err);
+          return res.json({ title: null, error: stderr?.toString() || err?.message });
+        }
+        res.json({ title: stdout.trim() || null });
+      });
+      child.stdin.write(psScript);
+      child.stdin.end();
+    } catch (e) {
+      res.json({ title: null });
     }
   });
 

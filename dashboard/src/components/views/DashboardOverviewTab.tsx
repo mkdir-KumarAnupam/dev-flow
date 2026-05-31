@@ -14,7 +14,7 @@ import {
   Flame, Target, Zap, Camera, PenTool, ExternalLink,
   Layers, Activity, Play, Trash2, FileCode, FolderOpen,
   Box, ArrowRight, Plus,
-  Sun, Sunset, Moon, Sword, Code2, Timer, Square, Monitor, CheckCircle2, Palette,
+  Sun, Sunset, Moon, Sword, Code2, Timer, Square, Monitor, CheckCircle2, Palette, Settings,
   User, Tag, AlertTriangle, FlaskConical, Cloud, Globe, Server, RefreshCw, Triangle, QrCode, Wifi, Lock
 } from 'lucide-react';
 import TrendArrowIcon from '../ui/TrendArrowIcon';
@@ -120,6 +120,16 @@ export default function DashboardOverviewTab() {
                   title="Security Keys Manager"
                 >
                   <Lock className="h-4 w-4" />
+                </motion.button>
+
+                <motion.button
+                  whileHover={{ scale: 1.05, rotate: 45 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => state.setSettingsModalOpen(true)}
+                  className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-foreground transition-colors"
+                  title="DevOS Settings"
+                >
+                  <Settings className="h-4 w-4" />
                 </motion.button>
 
 

@@ -32,7 +32,7 @@ import Playground from '../../Playground';
 export default function AssetWorkspaceTab() {
   const state = useGlobalApp();
   // We destructure everything from state since this is a massive legacy file
-  const { tunnelingProject, setTunnelingProject, securityManagerOpen, setSecurityManagerOpen, isAppVisible, setIsAppVisible, setupRequired, setSetupRequired, devosSettings, setDevosSettings, data, setData, modalOpen, setModalOpen, search, setSearch, codeModal, setCodeModal, sketchModal, setSketchModal, captureModal, setCaptureModal, flowModalOpen, setFlowModalOpen, timeChartType, setTimeChartType, topicView, setTopicView, gitModalOpen, setGitModalOpen, theme, setTheme, arenaTab, setArenaTab, drilldown, setDrilldown, linearIssues, setLinearIssues, linearError, setLinearError, linearProjectFilter, setLinearProjectFilter, linearSortBy, setLinearSortBy, newIssueTitle, setNewIssueTitle, isCreatingIssue, setIsCreatingIssue, activeTab, setActiveTab, assetTab, setAssetTab, assetPage, setAssetPage, assetSearch, setAssetSearch, manageDeployment, setManageDeployment, isHealthChecking, setIsHealthChecking, createNewSketch, assetSort, setAssetSort, sortOpen, setSortOpen, draggedIssueId, setDraggedIssueId, linearProjectOpen, setLinearProjectOpen, linearSortOpen, setLinearSortOpen, linearSearchTerm, setLinearSearchTerm, linearAssigneeFilter, setLinearAssigneeFilter, linearLabelFilter, setLinearLabelFilter, linearAssigneeOpen, setLinearAssigneeOpen, linearLabelOpen, setLinearLabelOpen, selectedIssue, setSelectedIssue, focusLive, setFocusLive, focusRunning, setFocusRunning, focusDurationInput, setFocusDurationInput, focusTarget, setFocusTarget, showWindowSelector, setShowWindowSelector, showQRCode, setShowQRCode, showRemoteQRCode, setShowRemoteQRCode, focusStarting, setFocusStarting, sessionJustEnded, setSessionJustEnded, showReportModal, setShowReportModal, isGeneratingReport, setIsGeneratingReport, localIp, setLocalIp, tunnelUrl, setTunnelUrl, generateReport, startFocusSession, handleCreateIssue, handleDrop, updateLinearState, fetchAll, flow, practice, projects, sandboxes, sketches, captures, totalLoc, totalMin, totalHrs, totalCoding, totalResearch, totalDistraction, totalIdle, techstack, gitStatus, deployments, nowMs, weekMs, inLast7, inPrev7, curLoc, prevLoc, trendLoc, curMin, prevMin, trendHrs, flowScores, avgFlow, curFlowScores, prevFlowScores, curAvgFlow, prevAvgFlow, trendFlow, solved, totalPMin, langs, pracWithAcc, avgAcc, curPrac, prevPrac, curAvgAcc, prevAvgAcc, trendAcc, projTimeMap, projTimeBars, techstackBars, dayCounts, today, daysBack, startDate, hmData, startMs, activeDayCount, streak, topicC, diffC, topicBars, diffPie, timePie, timeBar, timeRadar, flowTL, locTL, radarData, recentSubs, resumeTarget, deleteFlow, openCode, resumeWork, openSandbox, remoteDashboardUrl } = state;
+  const { tunnelingProject, setTunnelingProject, securityManagerOpen, setSecurityManagerOpen, isAppVisible, setIsAppVisible, setupRequired, setSetupRequired, devosSettings, setDevosSettings, data, setData, modalOpen, setModalOpen, search, setSearch, codeModal, setCodeModal, sketchModal, setSketchModal, captureModal, setCaptureModal, flowModalOpen, setFlowModalOpen, timeChartType, setTimeChartType, topicView, setTopicView, gitModalOpen, setGitModalOpen, theme, setTheme, arenaTab, setArenaTab, drilldown, setDrilldown, linearIssues, setLinearIssues, linearError, setLinearError, linearProjectFilter, setLinearProjectFilter, linearSortBy, setLinearSortBy, newIssueTitle, setNewIssueTitle, isCreatingIssue, setIsCreatingIssue, activeTab, setActiveTab, assetTab, setAssetTab, assetPage, setAssetPage, assetSearch, setAssetSearch, manageDeployment, setManageDeployment, isHealthChecking, setIsHealthChecking, createNewSketch, assetSort, setAssetSort, sortOpen, setSortOpen, draggedIssueId, setDraggedIssueId, linearProjectOpen, setLinearProjectOpen, linearSortOpen, setLinearSortOpen, linearSearchTerm, setLinearSearchTerm, linearAssigneeFilter, setLinearAssigneeFilter, linearLabelFilter, setLinearLabelFilter, linearAssigneeOpen, setLinearAssigneeOpen, linearLabelOpen, setLinearLabelOpen, selectedIssue, setSelectedIssue, focusLive, setFocusLive, focusRunning, setFocusRunning, focusDurationInput, setFocusDurationInput, focusTarget, setFocusTarget, showWindowSelector, setShowWindowSelector, showQRCode, setShowQRCode, showRemoteQRCode, setShowRemoteQRCode, focusStarting, setFocusStarting, sessionJustEnded, setSessionJustEnded, showReportModal, setShowReportModal, isGeneratingReport, setIsGeneratingReport, localIp, setLocalIp, tunnelUrl, setTunnelUrl, generateReport, startFocusSession, handleCreateIssue, handleDrop, updateLinearState, fetchAll, flow, practice, projects, sandboxes, sketches, captures, totalLoc, totalMin, totalHrs, totalCoding, totalResearch, totalDistraction, totalIdle, techstack, gitStatus, deployments, nowMs, weekMs, inLast7, inPrev7, curLoc, prevLoc, trendLoc, curMin, prevMin, trendHrs, flowScores, avgFlow, curFlowScores, prevFlowScores, curAvgFlow, prevAvgFlow, trendFlow, solved, totalPMin, langs, pracWithAcc, avgAcc, curPrac, prevPrac, curAvgAcc, prevAvgAcc, trendAcc, projTimeMap, projTimeBars, techstackBars, dayCounts, today, daysBack, startDate, hmData, startMs, activeDayCount, streak, topicC, diffC, topicBars, diffPie, timePie, timeBar, timeRadar, flowTL, locTL, radarData, recentSubs, resumeTarget, deleteFlow, openCode, resumeWork, openSandbox, remoteDashboardUrl, obsidianNotes, setQuickNoteModalOpen, setNoteReaderModalOpen, setSelectedNote, setFocusedNoteModalOpen } = state;
 
   const [deploymentsPage, setDeploymentsPage] = useState(0);
   const DEPLOYMENTS_PER_PAGE = 3;
@@ -47,7 +47,7 @@ export default function AssetWorkspaceTab() {
           <SectionHeader>Workspaces & Assets</SectionHeader>
           <motion.div variants={iV} className="mb-4 flex flex-col sm:flex-row gap-3 justify-between items-center glass-panel  rounded-2xl p-2  shadow-sm">
             <div className="flex gap-1 glass-panel text-muted-foreground p-1 rounded-xl">
-              {['Projects', 'Sandboxes', 'Sketches', 'Captures'].map(tab => (
+              {['Projects', 'Sandboxes', 'Sketches', 'Captures', 'Notes'].map(tab => (
                 <button key={tab} onClick={() => { setAssetTab(tab as any); setAssetPage(0); setAssetSearch(""); setAssetSort('Default'); }} className={`px-5 py-2 text-[11px] font-bold rounded-xl transition-all ${assetTab === tab ? 'bg-white dark:bg-slate-800 text-violet-600 dark:text-violet-400 shadow-sm' : 'text-slate-500 hover:text-foreground dark:text-slate-400 dark:hover:text-slate-200'}`}>
                   {tab}
                 </button>
@@ -56,6 +56,13 @@ export default function AssetWorkspaceTab() {
 
             {assetTab === 'Sketches' && (
                 <button onClick={createNewSketch} title="New Sketch" className="p-2 glass-panel hover:bg-white/10 dark:hover:bg-slate-800/50 text-violet-500 dark:text-violet-400 rounded-lg shadow-sm transition-all flex items-center justify-center"><PenTool className="w-4 h-4"/></button>
+            )}
+
+            {assetTab === 'Notes' && (
+              <div className="flex gap-2">
+                <button onClick={() => setQuickNoteModalOpen(true)} title="Quick Note" className="p-2 glass-panel hover:bg-white/10 dark:hover:bg-slate-800/50 text-emerald-500 dark:text-emerald-400 rounded-lg shadow-sm transition-all flex items-center justify-center"><Plus className="w-4 h-4"/></button>
+                <button onClick={() => setFocusedNoteModalOpen(true)} title="Focused Note" className="p-2 glass-panel hover:bg-white/10 dark:hover:bg-slate-800/50 text-blue-500 dark:text-blue-400 rounded-lg shadow-sm transition-all flex items-center justify-center"><Target className="w-4 h-4"/></button>
+              </div>
             )}
 
             <div className="flex items-center gap-2 w-full sm:w-auto">
@@ -108,7 +115,7 @@ export default function AssetWorkspaceTab() {
                 <div className="p-2">
                     {(() => {
                       const PAGE_SIZE = 4;
-                      const srcMap: Record<string, any[]> = { Projects: projects, Sandboxes: sandboxes, Sketches: sketches, Captures: captures, Deployments: deployments };
+                      const srcMap: Record<string, any[]> = { Projects: projects, Sandboxes: sandboxes, Sketches: sketches, Captures: captures, Deployments: deployments, Notes: obsidianNotes };
                       let src = srcMap[assetTab] || [];
 
                       if (assetSearch) {
@@ -323,6 +330,47 @@ export default function AssetWorkspaceTab() {
                                         <ExternalLink className="w-3 h-3" />
                                       </button>
                                     </div>
+                                  </div>
+                                </motion.div>
+                              ))}
+                              {assetTab === 'Notes' && paged.map((n: any, i: number) => (
+                                <motion.div
+                                  initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+                                  transition={{ duration: 0.35, delay: i * 0.04 }}
+                                  whileHover={{ scale: 1.025, y: -3 }} whileTap={{ scale: 0.98 }}
+                                  key={i}
+                                  onClick={() => { setSelectedNote(n); setNoteReaderModalOpen(true); }}
+                                  className="flex flex-col gap-3 p-4 rounded-2xl glass-panel shadow-sm hover:shadow-lg hover:border-emerald-300 dark:hover:border-emerald-700 transition-all cursor-pointer group"
+                                >
+                                  <div className="flex items-start gap-2 min-w-0">
+                                    <div className="p-2.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-500 rounded-xl group-hover:rotate-3 group-hover:scale-105 transition-transform flex-shrink-0">
+                                      <Tag className="h-4 w-4" />
+                                    </div>
+                                    <div className="min-w-0 flex-1">
+                                      <p className="text-xs font-bold text-foreground truncate">{n.name}</p>
+                                      {n.createdAt && (
+                                        <p className="text-[9px] text-slate-500 mt-0.5 line-clamp-1">
+                                          {new Date(n.createdAt).toLocaleString()}
+                                        </p>
+                                      )}
+                                      <div className="mt-2 flex flex-wrap gap-1">
+                                        {n.tags?.map((t: string) => (
+                                          <span key={t} className="text-[8px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 border border-emerald-200 dark:border-emerald-900/50 px-1.5 py-0.5 rounded">
+                                            #{t}
+                                          </span>
+                                        ))}
+                                        {n.project && (
+                                          <span className="text-[8px] bg-violet-500/10 text-violet-600 dark:text-violet-500 border border-violet-200 dark:border-violet-900/50 px-1.5 py-0.5 rounded">
+                                            @{n.project}
+                                          </span>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="mt-1">
+                                    <p className="text-[10px] text-slate-400 line-clamp-3 overflow-hidden text-ellipsis whitespace-pre-wrap">
+                                      {n.content}
+                                    </p>
                                   </div>
                                 </motion.div>
                               ))}

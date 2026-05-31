@@ -10,6 +10,9 @@ import IssueDetailsModal from './modals/IssueDetailsModal';
 import DeploymentsModal from './modals/DeploymentsModal';
 import TunnelQRCodeModal from './modals/TunnelQRCodeModal';
 import SecurityManagerModal from './modals/SecurityManagerModal';
+import SettingsModal from './modals/SettingsModal';
+import NoteReaderModal from './modals/NoteReaderModal';
+import FocusedNoteModal from './modals/FocusedNoteModal';
 
 export default function GlobalModals() {
   return (
@@ -26,6 +29,9 @@ export default function GlobalModals() {
       <DeploymentsModal />
       <TunnelQRCodeModal />
       <SecurityManagerModal />
+      <SettingsModal />
+      <NoteReaderModal />
+      <FocusedNoteModal />
     </>
   );
 }

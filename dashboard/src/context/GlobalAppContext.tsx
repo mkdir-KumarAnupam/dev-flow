@@ -42,6 +42,13 @@ export const GlobalAppProvider = ({ children }: { children: React.ReactNode }) =
   const [theme, setTheme] = useState<'light'|'dark'|'oled'|'brutal'>('oled');
   const [arenaTab, setArenaTab] = useState<'race' | 'war' | 'design' | 'whiteboard' | 'competitive'>('race');
 
+  const [obsidianNotes, setObsidianNotes] = useState<any[]>([]);
+  const [quickNoteModalOpen, setQuickNoteModalOpen] = useState(false);
+  const [noteReaderModalOpen, setNoteReaderModalOpen] = useState(false);
+  const [focusedNoteModalOpen, setFocusedNoteModalOpen] = useState(false);
+  const [selectedNote, setSelectedNote] = useState<any>(null);
+  const [settingsModalOpen, setSettingsModalOpen] = useState(false);
+
   useEffect(() => {
     const checkSetup = async () => {
       try {
@@ -288,10 +295,11 @@ export const GlobalAppProvider = ({ children }: { children: React.ReactNode }) =
   };
 
   const fetchAll = async () => {
-    const eps = ['flow', 'projects', 'sandboxes', 'practice', 'sessions', 'sketches', 'captures', 'techstack', 'git-status', 'deployments'];
+    const eps = ['flow', 'projects', 'sandboxes', 'practice', 'sessions', 'sketches', 'captures', 'techstack', 'git-status', 'deployments', 'obsidian/notes'];
     const r: any = {};
     for (const ep of eps) { try { const res = await fetch(apiUrl(`/api/${ep}`)); r[ep] = await res.json(); } catch { r[ep] = []; } }
     setData(r);
+    setObsidianNotes(Array.isArray(r['obsidian/notes']) ? r['obsidian/notes'] : []);
 
     try {
       const res = await fetch(apiUrl('/api/linear'));
@@ -610,6 +618,18 @@ export const GlobalAppProvider = ({ children }: { children: React.ReactNode }) =
     setTheme,
     arenaTab,
     setArenaTab,
+    obsidianNotes,
+    setObsidianNotes,
+    quickNoteModalOpen,
+    setQuickNoteModalOpen,
+    noteReaderModalOpen,
+    setNoteReaderModalOpen,
+    focusedNoteModalOpen,
+    setFocusedNoteModalOpen,
+    selectedNote,
+    setSelectedNote,
+    settingsModalOpen,
+    setSettingsModalOpen,
     drilldown,
     setDrilldown,
     linearIssues,
